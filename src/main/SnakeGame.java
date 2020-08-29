@@ -101,7 +101,7 @@ public class SnakeGame extends GameEngine {
         return gameInstance;
     }
 
-    public Graphics getGameGraphics() {
+    public Graphics2D getGameGraphics() {
         return mGraphics;
     }
 

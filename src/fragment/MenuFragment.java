@@ -5,6 +5,8 @@ import ui.Button;
 import ui.Component;
 import ui.Text;
 
+import java.util.Arrays;
+
 
 public class MenuFragment {
     protected SnakeGame gameInstance;
@@ -19,9 +21,9 @@ public class MenuFragment {
         Text quitText = new Text("Quit");
 
         components = new Component[]{
-            Button.createCentered(game, spText, true, false, 0, 0),
-            Button.createCentered(game, mpText, true, false, 0, 50),
-            Button.createCentered(game, quitText, true, false, 0, 100)
+            Button.createCentered(game, spText, true, true, 0,-100),
+            Button.createCentered(game, mpText, true, true, 0, -50),
+            Button.createCentered(game, quitText, true, true, 0, 0)
         };
     }
 

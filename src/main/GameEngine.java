@@ -371,13 +371,13 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
 	}
 
 	// Draws a line from (x1,y2) to (x2,y2)
-	void drawLine(double x1, double y1, double x2, double y2) {
+	public void drawLine(double x1, double y1, double x2, double y2) {
 		// Draw a Line
 		mGraphics.draw(new Line2D.Double(x1, y1, x2, y2));
 	}
 
 	// Draws a line from (x1,y2) to (x2,y2) with width l
-	void drawLine(double x1, double y1, double x2, double y2, double l) {
+	public void drawLine(double x1, double y1, double x2, double y2, double l) {
 		// Set the stroke
 		mGraphics.setStroke(new BasicStroke((float)l));
 
@@ -389,14 +389,14 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
 	}
 
 	// This function draws a rectangle at (x,y) with width and height (w,h)
-	void drawRectangle(double x, double y, double w, double h) {
+	public void drawRectangle(double x, double y, double w, double h) {
 		// Draw a Rectangle
 		mGraphics.draw(new Rectangle2D.Double(x, y, w, h));
 	}
 
 	// This function draws a rectangle at (x,y) with width and height (w,h)
 	// with a line of width l
-	void drawRectangle(double x, double y, double w, double h, double l) {
+	public void drawRectangle(double x, double y, double w, double h, double l) {
 		// Set the stroke
 		mGraphics.setStroke(new BasicStroke((float)l));
 
@@ -408,20 +408,20 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
 	}
 
 	// This function fills in a rectangle at (x,y) with width and height (w,h)
-	void drawSolidRectangle(double x, double y, double w, double h) {
+	public void drawSolidRectangle(double x, double y, double w, double h) {
 		// Fill a Rectangle
 		mGraphics.fill(new Rectangle2D.Double(x, y, w, h));
 	}
 
 	// This function draws a circle at (x,y) with radius
-	void drawCircle(double x, double y, double radius) {
+	public void drawCircle(double x, double y, double radius) {
 		// Draw a Circle
 		mGraphics.draw(new Ellipse2D.Double(x-radius, y-radius, radius*2, radius*2));
 	}
 
 	// This function draws a circle at (x,y) with radius
 	// with a line of width l
-	void drawCircle(double x, double y, double radius, double l) {
+	public void drawCircle(double x, double y, double radius, double l) {
 		// Set the stroke
 		mGraphics.setStroke(new BasicStroke((float)l));
 
@@ -433,7 +433,7 @@ public abstract class GameEngine implements KeyListener, MouseListener, MouseMot
 	}
 
 	// This function draws a circle at (x,y) with radius
-	void drawSolidCircle(double x, double y, double radius) {
+	public void drawSolidCircle(double x, double y, double radius) {
 		// Fill a Circle
 		mGraphics.fill(new Ellipse2D.Double(x-radius, y-radius, radius*2, radius*2));
 	}

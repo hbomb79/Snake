@@ -17,6 +17,8 @@ public class Button extends Component implements UIMouseReactive {
     protected Color activeBgColour;
     protected Color activeFgColour;
 
+    protected int padding = 10;
+
     protected Runnable activeCallback;
 
     protected enum HORIZONTAL_TEXT_ALIGN {
@@ -86,8 +88,38 @@ public class Button extends Component implements UIMouseReactive {
     @Override
     public void paintComponent() {
         // Figure out what colours we're using based on the 'state'.
+        Color fg, bg;
+        switch(state){
+            case HOVERED -> {
+                fg = hoveredFgColour;
+                bg = hoveredBgColour;
+            }
+            case ACTIVE -> {
+                fg = activeFgColour;
+                bg = activeBgColour;
+            }
+            default -> {
+                fg = fgColour;
+                bg = bgColour;
+            }
+        }
 
         // Draw the button
+        Graphics2D g = gameInstance.getGameGraphics();
+        gameInstance.changeColor(fg);
+        gameInstance.changeBackgroundColor(bg);
+        g.drawRect((int)x, (int)y, (int)(width + padding*2), (int)(height + padding*2));
+        g.setFont(text.getFontInstance());
+        g.drawString( text.getText(), (int)x + padding, (int)y + g.getFontMetrics().getHeight() + (int)(padding*0.5) );
+    }
+
+    public Button setPadding( int p ) {
+        padding = p;
+        return this;
+    }
+
+    public int getPadding() {
+        return padding;
     }
 
     public Button setX( double a ) {
