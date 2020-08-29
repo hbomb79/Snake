@@ -70,7 +70,8 @@ public class Text {
 
     public int getRenderedWidth() {
         // Get the graphics renderer from our engine
-        Graphics g = SnakeGame.getGameGraphics();
+        SnakeGame game = SnakeGame.getGameInstance();
+        Graphics g = game.getGameGraphics();
 
         // Store the old font here for later
         Font oldFont = g.getFont();
@@ -86,7 +87,8 @@ public class Text {
 
     public int getRenderedHeight() {
         // Get the graphics renderer from our engine
-        Graphics g = SnakeGame.getGameGraphics();
+        SnakeGame game = SnakeGame.getGameInstance();
+        Graphics g = game.getGameGraphics();
 
         // Store the old font here for later
         Font oldFont = g.getFont();

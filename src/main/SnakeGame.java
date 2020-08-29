@@ -13,6 +13,7 @@ import controllers.CollisionController;
 import controllers.EffectController;
 import controllers.EntityController;
 import controllers.UIController;
+import fragment.MenuFragment;
 
 import java.awt.*;
 
@@ -37,17 +38,29 @@ public class SnakeGame extends GameEngine {
     protected CollisionController collision;
     protected EntityController entity;
 
+    private boolean isGraphicsInitialised = false;
+
+    protected MenuFragment menu;
+
     protected static SnakeGame gameInstance;
 
     // Private constructor as this class is a singleton;
     private SnakeGame() {
         super(WIDTH, HEIGHT, TITLE);
-        ui = new UIController(this);
     }
 
     @Override
     public void init() {
         super.init();
+    }
+
+    protected void graphicsReady() {
+        if( !isGraphicsInitialised ) return;
+        ui = new UIController(this);
+        menu = new MenuFragment(this);
+
+        ui.reset();
+        menu.setupUI();
     }
 
     @Override
@@ -57,10 +70,15 @@ public class SnakeGame extends GameEngine {
 
     @Override
     public void paintComponent() {
+        if( !isGraphicsInitialised ) {
+            isGraphicsInitialised = true;
+            graphicsReady();
+        }
+
         changeBackgroundColor(black);
         clearBackground(WIDTH, HEIGHT);
-        changeColor(green);
-        drawCenteredText(50,TITLE);
+
+        ui.redraw();
     }
 
     public static void main(String[] args) {
@@ -83,9 +101,8 @@ public class SnakeGame extends GameEngine {
         return gameInstance;
     }
 
-    public static Graphics getGameGraphics() {
-        SnakeGame game = getGameInstance();
-        return game.mGraphics;
+    public Graphics getGameGraphics() {
+        return mGraphics;
     }
 
     public UIController getUIController() {
