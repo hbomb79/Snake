@@ -1,15 +1,12 @@
 package controllers;
 
-import interfaces.EngineComponent;
-import interfaces.ui.UIMouseReactive;
+import interfaces.UIMouseReactive;
 import main.SnakeGame;
 import ui.Component;
 
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class UIController extends Controller {

@@ -54,11 +54,13 @@ public class SnakeGame extends GameEngine {
     @Override
     public void init() {
         super.init();
+
+        ui = new UIController(this);
+        entity = new EntityController(this);
     }
 
     protected void graphicsReady() {
         if( !isGraphicsInitialised ) return;
-        ui = new UIController(this);
         menu = new MenuFragment(this);
 
         changeGameState(STATE.MENU);

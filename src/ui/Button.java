@@ -1,6 +1,6 @@
 package ui;
 
-import interfaces.ui.UIMouseReactive;
+import interfaces.UIMouseReactive;
 import main.SnakeGame;
 
 import java.awt.*;
