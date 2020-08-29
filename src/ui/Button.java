@@ -47,7 +47,7 @@ public class Button extends Component implements UIMouseReactive {
         bgColour = Color.black;
         fgColour = Color.white;
         hoveredBgColour = Color.white;
-        hoveredFgColour = Color.black;
+        hoveredFgColour = Color.white;
         activeBgColour = Color.white;
         activeFgColour = Color.white;
     }
@@ -115,9 +115,10 @@ public class Button extends Component implements UIMouseReactive {
 
         // Draw the button
         Graphics2D g = gameInstance.getGameGraphics();
-        gameInstance.changeColor(fg);
-        gameInstance.changeBackgroundColor(bg);
+        g.setColor(bg);
         g.drawRect((int)x, (int)y, (int)(width + padding*2), (int)(height + padding*2));
+
+        g.setColor(fg);
         g.setFont(text.getFontInstance());
         g.drawString( text.getText(), (int)x + padding, (int)y + g.getFontMetrics().getHeight() + (int)(padding*0.5) );
     }
