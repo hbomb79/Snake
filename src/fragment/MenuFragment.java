@@ -20,10 +20,22 @@ public class MenuFragment {
         Text mpText = new Text("Two Player");
         Text quitText = new Text("Quit");
 
+        Runnable startSinglePlayer = () -> {
+            game.startGame(1);
+        };
+
+        Runnable startTwoPlayer = () -> {
+            game.startGame(2);
+        };
+
+        Runnable quit = () -> {
+            game.quitGame();
+        };
+
         components = new Component[]{
-            Button.createCentered(game, spText, true, true, 0,-100),
-            Button.createCentered(game, mpText, true, true, 0, -50),
-            Button.createCentered(game, quitText, true, true, 0, 0)
+            Button.createCentered(game, spText, true, true, 0,-100).setCallback(startSinglePlayer),
+            Button.createCentered(game, mpText, true, true, 0, -50).setCallback(startTwoPlayer),
+            Button.createCentered(game, quitText, true, true, 0, 0).setCallback(quit)
         };
     }
 

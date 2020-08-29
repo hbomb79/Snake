@@ -1,8 +1,11 @@
 package interfaces.ui;
 
+import java.awt.event.MouseEvent;
+
 public interface UIMouseReactive {
-    void onMouseEnter();
-    void onMouseLeave();
-    void onMouseDown();
-    void onMouseUp();
+    void onMouseEnter(MouseEvent e);
+    void onMouseLeave(MouseEvent e);
+    void onMouseDown(MouseEvent e, boolean within);
+    void onMouseUp(MouseEvent e, boolean within);
+    boolean isEntered();
 }

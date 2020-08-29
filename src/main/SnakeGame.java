@@ -16,6 +16,8 @@ import controllers.UIController;
 import fragment.MenuFragment;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 public class SnakeGame extends GameEngine {
     public static final String TITLE = "Snake Game";
@@ -59,13 +61,14 @@ public class SnakeGame extends GameEngine {
         ui = new UIController(this);
         menu = new MenuFragment(this);
 
-        ui.reset();
-        menu.setupUI();
+        changeGameState(STATE.MENU);
     }
 
     @Override
     public void update(double dt) {
-
+        if(gameState == STATE.GAME) {
+            entity.update(dt);
+        }
     }
 
     @Override
@@ -86,6 +89,53 @@ public class SnakeGame extends GameEngine {
         SnakeGame game = SnakeGame.getGameInstance();
 
     }
+
+    // Called whenever a key is pressed
+    public void keyPressed(KeyEvent event) {}
+
+    // Called whenever a key is released
+    public void keyReleased(KeyEvent event) {}
+
+    // Called whenever a key is pressed and immediately released
+    public void keyTyped(KeyEvent event) {}
+
+    // Called whenever a mouse button is pressed
+    public void mousePressed(MouseEvent event) {
+        ui.mousePressed(event);
+    }
+
+    // Called whenever a mouse button is released
+    public void mouseReleased(MouseEvent event) {
+        ui.mouseReleased(event);
+    }
+
+    // Called whenever the mouse is moved
+    public void mouseMoved(MouseEvent event) {
+        ui.mouseMoved(event);
+    }
+
+    public void changeGameState(STATE s) {
+        ui.reset();
+        if(s == STATE.MENU) {
+            menu.setupUI();
+        } else if(s == STATE.GAME) {
+            //TODO
+        } else if(s == STATE.DEATH) {
+            //TODO
+        }
+
+        gameState = s;
+    }
+
+    public void startGame(int c) {
+        playerCount = c;
+        entity.initWithPlayers(playerCount);
+    }
+
+    public void quitGame() {
+        System.exit(1);
+    }
+
 
     /*
      * Returns the SnakeGame singleton instance, prevents having multiple instances of this game running at once.

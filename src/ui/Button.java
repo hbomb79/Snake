@@ -4,6 +4,7 @@ import interfaces.ui.UIMouseReactive;
 import main.SnakeGame;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class Button extends Component implements UIMouseReactive {
     protected Text text;
@@ -52,33 +53,41 @@ public class Button extends Component implements UIMouseReactive {
     }
 
     @Override
-    public void onMouseEnter() {
+    public void onMouseEnter(MouseEvent event) {
         state = STATE.HOVERED;
     }
 
     @Override
-    public void onMouseLeave() {
+    public void onMouseLeave(MouseEvent event) {
         state = STATE.INACTIVE;
     }
 
     @Override
-    public void onMouseDown() {
+    public void onMouseDown(MouseEvent event, boolean within) {
+        if(!within) {
+            state = STATE.INACTIVE;
+            return;
+        }
+
         state = STATE.ACTIVE;
     }
 
     @Override
-    public void onMouseUp() {
+    public void onMouseUp(MouseEvent event, boolean within) {
         // if mouse up within the bounds of the button (might not be, we're told anyway incase the button
         // thinks it's still being pressed; for example when someone clicks, drags the mouse off the button, and then
         // releases), and the button state is active, fire the callback.
 
-        //TODO Source this elsewhere.
-        boolean within = true;
         if(within && state == STATE.ACTIVE ) {
             if(activeCallback != null) {
                 activeCallback.run();
             }
         }
+    }
+
+    @Override
+    public boolean isEntered() {
+        return state == STATE.HOVERED;
     }
 
     // No need to update every tick; we only need to update when a mouse event occurs.
@@ -118,26 +127,26 @@ public class Button extends Component implements UIMouseReactive {
         return this;
     }
 
+    public Component setWidth( double a ) {
+        width = a + (2*padding);
+        return this;
+    }
+
+    public double getWidth() {
+        return width + (2*padding);
+    }
+
+    public Component setHeight( double b ) {
+        height = b + (2*padding);
+        return this;
+    }
+
+    public double getHeight() {
+        return height + (2*padding);
+    }
+
     public int getPadding() {
         return padding;
-    }
-
-    public Button setX( double a ) {
-        x = a;
-        return this;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public Button setY( double b ) {
-        y = b;
-        return this;
-    }
-
-    public double getY() {
-        return y;
     }
 
     public Button setBgColour(Color c) {
