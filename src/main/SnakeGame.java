@@ -29,6 +29,10 @@ public class SnakeGame extends GameEngine {
         DEATH
     }
 
+    public final Image appleImage;
+    public final Image snakeHeadImage;
+    public final Image snakeBodyImage;
+
     protected int score = 0;
     protected int lives = 4;
     protected int gameSpeed = 1;
@@ -49,6 +53,10 @@ public class SnakeGame extends GameEngine {
     // Private constructor as this class is a singleton;
     private SnakeGame() {
         super(WIDTH, HEIGHT, TITLE);
+
+        appleImage = loadImage("resources/apple.png");
+        snakeHeadImage = loadImage("resources/head.png");
+        snakeBodyImage = loadImage("resources/dot.png");
     }
 
     @Override
@@ -61,6 +69,7 @@ public class SnakeGame extends GameEngine {
 
     protected void graphicsReady() {
         if( !isGraphicsInitialised ) return;
+
         menu = new MenuFragment(this);
 
         changeGameState(STATE.MENU);
@@ -83,6 +92,7 @@ public class SnakeGame extends GameEngine {
         changeBackgroundColor(black);
         clearBackground(WIDTH, HEIGHT);
 
+        entity.redraw();
         ui.redraw();
     }
 
@@ -132,6 +142,7 @@ public class SnakeGame extends GameEngine {
     public void startGame(int c) {
         playerCount = c;
         entity.initWithPlayers(playerCount);
+        changeGameState(STATE.GAME);
     }
 
     public void quitGame() {

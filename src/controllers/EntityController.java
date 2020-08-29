@@ -23,6 +23,14 @@ public class EntityController {
     }
 
     public void update(double dt) {
+        for (SnakeEntity player : players) {
+            player.update(dt);
+        }
+    }
 
+    public void redraw() {
+        for (SnakeEntity player : players) {
+            player.paintComponent();
+        }
     }
 }
