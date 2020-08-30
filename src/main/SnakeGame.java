@@ -104,7 +104,9 @@ public class SnakeGame extends GameEngine {
     }
 
     // Called whenever a key is pressed
-    public void keyPressed(KeyEvent event) {}
+    public void keyPressed(KeyEvent event) {
+        entity.keyPressed(event);
+    }
 
     // Called whenever a key is released
     public void keyReleased(KeyEvent event) {}
