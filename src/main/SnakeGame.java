@@ -13,6 +13,7 @@ import controllers.CollisionController;
 import controllers.EffectController;
 import controllers.EntityController;
 import controllers.UIController;
+import exception.InvalidParameterException;
 import fragment.MenuFragment;
 
 import java.awt.*;
