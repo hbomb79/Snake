@@ -141,9 +141,16 @@ public class SnakeGame extends GameEngine {
     }
 
     public void startGame(int c) {
-        playerCount = c;
-        entity.initWithPlayers(playerCount);
-        changeGameState(STATE.GAME);
+        try {
+            playerCount = c;
+            entity.initWithPlayers(playerCount);
+            changeGameState(STATE.GAME);
+        } catch (InvalidParameterException e) {
+            System.out.println("Fatal exception: " + e.getMessage());
+            e.printStackTrace();
+
+            System.exit(-1);
+        }
     }
 
     public void quitGame() {

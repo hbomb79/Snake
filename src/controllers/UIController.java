@@ -41,6 +41,7 @@ public class UIController extends Controller {
         eventY = event.getY();
         return (eventX > elementX && eventX < elementX + c.getWidth()) && (eventY > elementY && eventY < elementY + c.getHeight());
     }
+
     // Called whenever a mouse button is pressed
     public void mousePressed(MouseEvent event) {
         for (Component e : elements) {
