@@ -4,6 +4,7 @@ import main.SnakeGame;
 import org.w3c.dom.css.Rect;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
@@ -18,7 +19,7 @@ public class SnakeEntity extends Entity {
     protected final int partWidth;
     protected final int partHeight;
 
-    protected int velocity = 10;
+    protected int velocity = 2;
     protected DIRECTION direction;
     public enum DIRECTION {
         UP,
@@ -28,14 +29,28 @@ public class SnakeEntity extends Entity {
     }
 
     private static class SnakePart {
+        SnakeEntity master;
         int x;
         int y;
         DIRECTION direction;
 
-        public SnakePart(int X, int Y, DIRECTION dir) {
+        public SnakePart(SnakeEntity snake, int X, int Y, DIRECTION dir) {
             x = X;
             y = Y;
             direction = dir;
+            master = snake;
+        }
+
+        public int getXVelocityCoefficient(int velocity) {
+            return direction == DIRECTION.DOWN || direction == DIRECTION.UP ? 0 : velocity * (direction == DIRECTION.LEFT ? -1 : 1);
+        }
+
+        public int getYVelocityCoefficient(int velocity) {
+            return direction == DIRECTION.LEFT || direction == DIRECTION.RIGHT ? 0 : velocity * (direction == DIRECTION.UP ? -1 : 1);
+        }
+
+        public Rectangle getBounds() {
+            return new Rectangle(x, y, master.partWidth, master.partHeight);
         }
     }
 
@@ -126,8 +141,7 @@ public class SnakeEntity extends Entity {
         int offsetX = oD == DIRECTION.LEFT ? 1 : (oD == DIRECTION.RIGHT ? -1 : 0);
         int offsetY = oD == DIRECTION.UP ? 1 : (oD == DIRECTION.DOWN ? -1 : 0);
         for (int i = 0; i < amount; i++) {
-            snake.add(new SnakePart(oX + (partWidth*i*offsetX), oY + (partHeight*i*offsetY), oD));
-            System.out.println("Added snake part at x,y: " + snake.peekLast().x + ", " + snake.peekLast().y);
+            snake.add(new SnakePart(this,oX + (partWidth*i*offsetX), oY + (partHeight*i*offsetY), oD));
         }
     }
 
@@ -144,8 +158,18 @@ public class SnakeEntity extends Entity {
         turns.addFirst(newTurn);
     }
 
+    protected Rectangle createCollisionBox(int x, int y, int deltaX, int deltaY) {
+        System.out.println("x: " + x + ", y: " + y + ", dX: " + deltaX + ", dY: " + deltaY);
+        int minX = Math.min(x, deltaX);
+        int maxX = Math.max(x, deltaX);
+        int minY = Math.min(y, deltaY);
+        int maxY = Math.max(y, deltaY);
 
-    public void moveSnake() {
+        return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+    }
+
+    //TODO Major cleanup of this method required
+    public LinkedList<Rectangle> moveSnake() {
         // So, when moving the snake we move all parts at the same velocity. As each part of the snake
         // may be travelling a different direction, we use a linked list (turns) to keep track of user turns.
 
@@ -153,13 +177,14 @@ public class SnakeEntity extends Entity {
         // are going to, we can apply the turn and continue on our new path.
 
         // Once all dots have moved past the turn, it is destroyed from the linked list.
+        LinkedList<Rectangle> collisionBoxes = new LinkedList<>();
         for (int i = 0, snakeSize = snake.size(); i < snakeSize; i++) {
             SnakePart s = snake.get(i);
             boolean isLastPart = (i+1) == snakeSize;
 
             // Find the velocity difference
-            int xVel = (s.direction == DIRECTION.DOWN || s.direction == DIRECTION.UP) ? 0 : velocity * (s.direction == DIRECTION.LEFT ? -1 : 1);
-            int yVel = (s.direction == DIRECTION.LEFT || s.direction == DIRECTION.RIGHT) ? 0 : velocity * (s.direction == DIRECTION.UP ? -1 : 1);
+            int xVel = s.getXVelocityCoefficient(velocity);
+            int yVel = s.getYVelocityCoefficient(velocity);
             // Starting
             int sX = s.x;
             int sY = s.y;
@@ -174,14 +199,16 @@ public class SnakeEntity extends Entity {
             // So, we know where we're trying to go (using velocity), check if this boundary intersects with a turn.
             // This boundary covers where we are, and where we're going. We use Math.min/max to ensure the rectangle
             // doesn't have a negative width and height, but instead just starts further up/left.
+
+            //TODO Simplify boundary creation, potentially move to SnakePart class.
             Rectangle boundary = new Rectangle(Math.min(sX, tX), Math.min(sY, tY), Math.max( 1, Math.max(sX, tX) - Math.min(sX, tX) ), Math.max( 1, Math.max(sY, tY) - Math.min(sY, tY)));
             System.out.println("New part; searching for turns inside boundary: " + boundary.toString());
             SnakeTurn t = SnakeTurn.findNextTurn(boundary, turns);
             System.out.println("Found turn: " + t);
             if(t != null) {
                 while (t != null) {
-                    xVel = (s.direction == DIRECTION.DOWN || s.direction == DIRECTION.UP) ? 0 : velocity * (s.direction == DIRECTION.LEFT ? -1 : 1);
-                    yVel = (s.direction == DIRECTION.LEFT || s.direction == DIRECTION.RIGHT) ? 0 : velocity * (s.direction == DIRECTION.UP ? -1 : 1);
+                    xVel = s.getXVelocityCoefficient(velocity);
+                    yVel = s.getYVelocityCoefficient(velocity);
                     System.out.println("Moving snake part " + i + " from x,y: " + sX + ", " + sY + " - to x,y: " + tX + ", " + tY);
                     System.out.println("Calculated x/y vel: " + xVel + ", " + yVel + " - direction: " + s.direction);
                     System.out.println("Processing TURN at: " + t.x + "," + t.y + " with direction " + t.newDirection + "("+i+")");
@@ -194,9 +221,11 @@ public class SnakeEntity extends Entity {
                     System.out.println("dX, dY: " + dX + ", " + dY);
 
                     // Before we commit to the move, check if there's another turn between this turn, and the destination
+                    //TODO Simplify boundary creation, potentially move to SnakePart class.
                     boundary.setRect(Math.min(t.x, tX), Math.min(t.y, tY), Math.max(t.x, tX) - Math.min(t.x, tX), Math.max(t.y, tY) - Math.min(t.y, tY));
                     SnakeTurn nextTurn = SnakeTurn.findNextTurn(boundary, turns, t);
                     System.out.println("Using rect " + boundary.toString() + " to search for turns");
+                    //TODO Should be able merge blocks for same axis of movement in to one if block
                     if (t.newDirection == DIRECTION.UP) {
                         s.x = t.x;
                         s.direction = DIRECTION.UP;
@@ -245,6 +274,8 @@ public class SnakeEntity extends Entity {
                         System.out.println("[DESTROY] Marked turn @ x,y: " + t.x + ", " + t.y + " for destruction");
                         t.markForDestruction();
                     }
+
+                    collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y));
                     t = nextTurn;
                 }
 
@@ -252,6 +283,79 @@ public class SnakeEntity extends Entity {
             } else {
                 s.x = tX;
                 s.y = tY;
+
+                collisionBoxes.add(createCollisionBox(sX, sY, tX, tY));
+            }
+        }
+
+        return collisionBoxes;
+    }
+
+    /*
+     * Returns a rough bounding box of this snake; of course, because a snake is not always rectangular, this
+     * bounding box is for preliminary checks ONLY. It should only be used to ignore potential collisions, not to confirm
+     * them.
+     *
+     * Use isPointColliding to test if a given point is colliding with the snake.
+     */
+    public Rectangle getBounds() {
+        int minX = 0;
+        int minY = 0;
+        int maxX = 0;
+        int maxY = 0;
+        // Find the min and max parts of the snake
+        for (int i = 0, snakeSize = snake.size(); i < snakeSize; i++) {
+            SnakePart part = snake.get(i);
+            if(i == 0) {
+                minX = part.x;
+                minY = part.y;
+                maxX = part.x;
+                maxY = part.y;
+            }
+
+            if (part.x < minX) {
+                minX = part.x;
+            } else if (part.x > maxX) {
+                maxX = part.x;
+            }
+            if (part.y < minY) {
+                minY = part.y;
+            } else if (part.y > maxY) {
+                maxY = part.y;
+            }
+        }
+
+        return new Rectangle(minX, minY, maxX - minX + partWidth, maxY - minY + partHeight);
+    }
+
+    public boolean isPointColliding(int x, int y) {
+        // Check each part of the snake, return true as soon as collision occurs.
+        for(SnakePart part : snake) {
+            if(part.getBounds().contains(x, y)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isIntersecting(Rectangle b) {
+        // Check each part of the snake, return true as soon as collision occurs.
+        for(SnakePart part : snake) {
+            if(part.getBounds().intersects(b)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected void checkCollisions(LinkedList<Rectangle> collisionBoxes) {
+        Rectangle board = new Rectangle(1, 1, SnakeGame.WIDTH, SnakeGame.HEIGHT);
+        for(Rectangle bounds : collisionBoxes) {
+            // Check if the snake is colliding with the edge of the map.
+            if(bounds.x < 0 || bounds.x + bounds.width > SnakeGame.WIDTH || bounds.y < 0 || bounds.y + bounds.height > SnakeGame.HEIGHT) {
+                System.out.println("OUTSIDE " + bounds.toString());
             }
         }
     }
@@ -259,8 +363,10 @@ public class SnakeEntity extends Entity {
     @Override
     public void update(double dt) {
         // Move depending on velocity
-        moveSnake();
+        LinkedList<Rectangle> collisionBoxes = moveSnake();
         SnakeTurn.destroyDwindling(turns);
+
+        checkCollisions(collisionBoxes);
     }
 
     @Override
@@ -278,5 +384,7 @@ public class SnakeEntity extends Entity {
                 gameInstance.drawImage(bodyImage, part.x, part.y);
             }
         }
+
+        g.draw(getBounds());
     }
 }
