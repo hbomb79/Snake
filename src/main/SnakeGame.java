@@ -18,6 +18,7 @@ import fragment.MenuFragment;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 public class SnakeGame extends GameEngine {
     public static final String TITLE = "Snake Game";
@@ -29,9 +30,9 @@ public class SnakeGame extends GameEngine {
         DEATH
     }
 
-    public final Image appleImage;
-    public final Image snakeHeadImage;
-    public final Image snakeBodyImage;
+    public final BufferedImage appleImage;
+    public final BufferedImage snakeHeadImage;
+    public final BufferedImage snakeBodyImage;
 
     protected int score = 0;
     protected int lives = 4;
