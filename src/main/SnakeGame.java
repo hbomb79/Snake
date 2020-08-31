@@ -20,12 +20,13 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public class SnakeGame extends GameEngine {
     public static final String TITLE = "Snake Game";
     public static final int    WIDTH = 550;
     public static final int    HEIGHT = WIDTH / 12 * 9;
-    public static enum STATE {
+    public enum STATE {
         MENU,
         GAME,
         DEATH
@@ -40,6 +41,7 @@ public class SnakeGame extends GameEngine {
     protected int gameSpeed = 1;
     protected int playerCount = 0;
     protected STATE gameState = STATE.MENU;
+    protected Random randomGenerator;
 
     protected UIController ui;
     protected EffectController fx;
@@ -67,6 +69,7 @@ public class SnakeGame extends GameEngine {
 
         ui = new UIController(this);
         entity = new EntityController(this);
+        collision = new CollisionController(this);
     }
 
     protected void graphicsReady() {
@@ -100,8 +103,7 @@ public class SnakeGame extends GameEngine {
 
     public static void main(String[] args) {
         // Entry point for game. Use this method to retrieve the singleton instance of SnakeGame.
-        SnakeGame game = SnakeGame.getGameInstance();
-
+        SnakeGame.getGameInstance();
     }
 
     // Called whenever a key is pressed
@@ -160,6 +162,18 @@ public class SnakeGame extends GameEngine {
         System.exit(1);
     }
 
+    public Random generateRandom() {
+        if(randomGenerator == null)
+            randomGenerator = new Random();
+
+        return randomGenerator;
+    }
+
+    public Point generateRandomPoint() {
+        Random r = generateRandom();
+        return new Point(r.nextInt(WIDTH), r.nextInt(HEIGHT));
+    }
+
 
     /*
      * Returns the SnakeGame singleton instance, prevents having multiple instances of this game running at once.
@@ -181,6 +195,14 @@ public class SnakeGame extends GameEngine {
 
     public UIController getUIController() {
         return ui;
+    }
+
+    public CollisionController getCollisionController() {
+        return collision;
+    }
+
+    public EntityController getEntityController() {
+        return entity;
     }
 
     /* Graphics Helper Functions */

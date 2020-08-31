@@ -1,5 +1,7 @@
 package entity;
 
+import controllers.CollisionController;
+import interfaces.CollisionElement;
 import main.SnakeGame;
 import org.w3c.dom.css.Rect;
 
@@ -8,7 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
-public class SnakeEntity extends Entity {
+public class SnakeEntity extends Entity implements CollisionElement {
     protected final BufferedImage headImage;
     protected final BufferedImage bodyImage;
     protected final int startSize;
@@ -21,6 +23,7 @@ public class SnakeEntity extends Entity {
 
     protected int velocity = 2;
     protected DIRECTION direction;
+
     public enum DIRECTION {
         UP,
         RIGHT,
@@ -165,7 +168,10 @@ public class SnakeEntity extends Entity {
         int minY = Math.min(y, deltaY);
         int maxY = Math.max(y, deltaY);
 
-        return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+        Rectangle collision = new Rectangle(minX, minY, Math.max(1, maxX - minX), Math.max(1, maxY - minY));
+
+        System.out.println("New collision box created: " + collision.toString());
+        return collision;
     }
 
     //TODO Major cleanup of this method required
@@ -177,9 +183,16 @@ public class SnakeEntity extends Entity {
         // are going to, we can apply the turn and continue on our new path.
 
         // Once all dots have moved past the turn, it is destroyed from the linked list.
+
+        // Store rectangles that map the movement of the head of the snake for collision testing in the next step.
+        // This allows us to see if the snake left the map, collided with an entity, etc.
+        // We can't simply look ahead to see if it's GOING to hit something, as we don't know that there isn't a SnakeTurn
+        // before then; implementing a separate system to check seems like a waste when this entire method is essentially
+        // doing that already and there's no real advantage to us calculating the path of the snake twice.
         LinkedList<Rectangle> collisionBoxes = new LinkedList<>();
         for (int i = 0, snakeSize = snake.size(); i < snakeSize; i++) {
             SnakePart s = snake.get(i);
+            boolean isHead = i == 0;
             boolean isLastPart = (i+1) == snakeSize;
 
             // Find the velocity difference
@@ -275,7 +288,7 @@ public class SnakeEntity extends Entity {
                         t.markForDestruction();
                     }
 
-                    collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y));
+                    if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y));
                     t = nextTurn;
                 }
 
@@ -284,7 +297,7 @@ public class SnakeEntity extends Entity {
                 s.x = tX;
                 s.y = tY;
 
-                collisionBoxes.add(createCollisionBox(sX, sY, tX, tY));
+                if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, tX, tY));
             }
         }
 
@@ -328,10 +341,12 @@ public class SnakeEntity extends Entity {
         return new Rectangle(minX, minY, maxX - minX + partWidth, maxY - minY + partHeight);
     }
 
-    public boolean isPointColliding(int x, int y) {
+    public boolean isCollisionBoxIntersecting(Rectangle collision) {
+        if(collision.intersects(getBounds())) return false;
+
         // Check each part of the snake, return true as soon as collision occurs.
         for(SnakePart part : snake) {
-            if(part.getBounds().contains(x, y)) {
+            if(collision.intersects(part.getBounds())) {
                 return true;
             }
         }
@@ -339,24 +354,20 @@ public class SnakeEntity extends Entity {
         return false;
     }
 
-    public boolean isIntersecting(Rectangle b) {
-        // Check each part of the snake, return true as soon as collision occurs.
-        for(SnakePart part : snake) {
-            if(part.getBounds().intersects(b)) {
-                return true;
-            }
-        }
+    @Override
+    public boolean collidedWithGameBoundary(Rectangle collisionBox) {
+        return true;
+    }
 
+    @Override
+    public boolean collidedWithBy(Rectangle collision, CollisionElement source) {
         return false;
     }
 
     protected void checkCollisions(LinkedList<Rectangle> collisionBoxes) {
-        Rectangle board = new Rectangle(1, 1, SnakeGame.WIDTH, SnakeGame.HEIGHT);
+        CollisionController collisions = gameInstance.getCollisionController();
         for(Rectangle bounds : collisionBoxes) {
-            // Check if the snake is colliding with the edge of the map.
-            if(bounds.x < 0 || bounds.x + bounds.width > SnakeGame.WIDTH || bounds.y < 0 || bounds.y + bounds.height > SnakeGame.HEIGHT) {
-                System.out.println("OUTSIDE " + bounds.toString());
-            }
+            collisions.checkCollision(this, bounds);
         }
     }
 
@@ -364,6 +375,9 @@ public class SnakeEntity extends Entity {
     public void update(double dt) {
         // Move depending on velocity
         LinkedList<Rectangle> collisionBoxes = moveSnake();
+        for(Rectangle b : collisionBoxes) {
+            System.out.println(b.toString());
+        }
         SnakeTurn.destroyDwindling(turns);
 
         checkCollisions(collisionBoxes);

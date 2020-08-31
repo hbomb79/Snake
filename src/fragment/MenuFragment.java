@@ -5,9 +5,6 @@ import ui.Button;
 import ui.Component;
 import ui.Text;
 
-import java.util.Arrays;
-
-
 public class MenuFragment {
     protected SnakeGame gameInstance;
     protected Component[] components;
@@ -20,13 +17,8 @@ public class MenuFragment {
         Text mpText = new Text("Two Player");
         Text quitText = new Text("Quit");
 
-        Runnable startSinglePlayer = () -> {
-            game.startGame(1);
-        };
-
-        Runnable startTwoPlayer = () -> {
-            game.startGame(2);
-        };
+        Runnable startSinglePlayer = () -> game.startGame(1);
+        Runnable startTwoPlayer = () -> game.startGame(2);
 
         components = new Component[]{
             Button.createCentered(game, spText, true, true, 0,-100).setCallback(startSinglePlayer),

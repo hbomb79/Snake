@@ -1,11 +1,10 @@
 package entity;
 
+import interfaces.CollisionElement;
 import interfaces.EngineComponent;
 import main.SnakeGame;
 
-import java.awt.event.KeyEvent;
-
-public abstract class Entity implements EngineComponent {
+public abstract class Entity implements EngineComponent, CollisionElement {
     protected SnakeGame gameInstance;
 
     public Entity(SnakeGame game) {

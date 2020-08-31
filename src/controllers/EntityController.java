@@ -1,19 +1,23 @@
 package controllers;
 
+import entity.Entity;
 import entity.SnakeEntity;
 import exception.InvalidParameterException;
 import main.SnakeGame;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
 
-public class EntityController {
+public class EntityController extends Controller {
     SnakeGame gameInstance;
 
-    int playerCount;
-    SnakeEntity[] players;
+    protected int playerCount;
+    protected SnakeEntity[] players;
+    protected LinkedList<Entity> pickups = new LinkedList<>();
 
-    public EntityController(SnakeGame game) {
-        gameInstance = game;
+    public EntityController(SnakeGame g) {
+        super(g);
     }
 
     public void initWithPlayers(int count) throws InvalidParameterException {
@@ -43,6 +47,10 @@ public class EntityController {
         for(SnakeEntity player : players) {
             player.paintComponent();
         }
+    }
+
+    public int getPlayerCount() {
+        return playerCount;
     }
 
     public void keyPressed(KeyEvent event) {
@@ -83,4 +91,8 @@ public class EntityController {
                 break;
         }
     };
+
+    public void spawnEntity(Entity e, Point p) {
+
+    }
 }
