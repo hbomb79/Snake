@@ -74,8 +74,8 @@ public abstract class Pickup extends Entity {
         return new Rectangle(x, y, width, height);
     }
 
-    public boolean isCollisionBoxIntersecting(Rectangle collision) {
-        return getBounds().intersects(collision);
+    public Rectangle isCollisionBoxIntersecting(Rectangle collision) {
+        return getBounds().intersects(collision) ? getBounds() : null;
     }
 
     public boolean collidedWithGameBoundary(Rectangle collisionBox) { return false; }

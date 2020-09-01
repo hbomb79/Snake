@@ -35,13 +35,13 @@ public class RandomPoint extends Point implements CollisionElement {
     }
 
     @Override
-    public boolean collidedWithBy(Rectangle collisionBox, CollisionElement source) {
+    public boolean collidedWithBy(Rectangle collisionBox, CollisionElement source, Rectangle infringedBoundary) {
         return false;
     }
 
     @Override
-    public boolean isCollisionBoxIntersecting(Rectangle collision) {
-        return false;
+    public Rectangle isCollisionBoxIntersecting(Rectangle collision) {
+        return null;
     }
 
     @Override

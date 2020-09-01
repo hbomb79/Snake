@@ -54,7 +54,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
         }
 
         public Rectangle getBounds() {
-            return new Rectangle(x, y, master.partWidth-1, master.partHeight-1);
+            return new Rectangle(x, y, master.partWidth, master.partHeight);
         }
     }
 
@@ -167,14 +167,18 @@ public class SnakeEntity extends Entity implements CollisionElement {
         return playerId;
     }
 
-    protected Rectangle createCollisionBox(int x, int y, int deltaX, int deltaY) {
+    protected Rectangle createCollisionBox(int x, int y, int deltaX, int deltaY, SnakePart part) {
         System.out.println("x: " + x + ", y: " + y + ", dX: " + deltaX + ", dY: " + deltaY);
         int minX = Math.min(x, deltaX);
         int maxX = Math.max(x, deltaX);
         int minY = Math.min(y, deltaY);
         int maxY = Math.max(y, deltaY);
+        int width = Math.max(1, maxX - minX);
+        int height = Math.max(1, maxY - minY);
+        int xVel = part.getXVelocityCoefficient(velocity);
+        int yVel = part.getYVelocityCoefficient(velocity);
 
-        Rectangle collision = new Rectangle(minX, minY, Math.max(1, maxX - minX), Math.max(1, maxY - minY));
+        Rectangle collision = new Rectangle(minX, minY, partWidth, partHeight);
 
         System.out.println("New collision box created: " + collision.toString());
         return collision;
@@ -201,15 +205,12 @@ public class SnakeEntity extends Entity implements CollisionElement {
             boolean isHead = i == 0;
             boolean isLastPart = (i+1) == snakeSize;
 
-            // Find the velocity difference
-            int xVel = s.getXVelocityCoefficient(velocity);
-            int yVel = s.getYVelocityCoefficient(velocity);
             // Starting
             int sX = s.x;
             int sY = s.y;
             // Target
-            int tX = s.x + xVel;
-            int tY = s.y + yVel;
+            int tX = s.x + s.getXVelocityCoefficient(velocity);
+            int tY = s.y + s.getYVelocityCoefficient(velocity);
 
             // So, we know where we're trying to go (using velocity), check if this boundary intersects with a turn.
             // This boundary covers where we are, and where we're going. We use Math.min/max to ensure the rectangle
@@ -221,8 +222,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
             SnakeTurn t = SnakeTurn.findNextTurn(boundary, turns);
             if(t != null) {
                 while (t != null) {
-                    xVel = s.getXVelocityCoefficient(velocity);
-                    yVel = s.getYVelocityCoefficient(velocity);
                     // We're going to collide with a 'turn'; however we might not be landing right on it, we could be
                     // moving past it. Find the difference between the snake part and the turn and apply them so the
                     // dot moves fluidly around the 'turn/corner'.
@@ -237,7 +236,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
                     //TODO Should be able merge blocks for same axis of movement in to one if block
                     if (t.newDirection == DIRECTION.UP) {
                         s.x = t.x;
-                        s.direction = DIRECTION.UP;
                         if (nextTurn != null) {
                             // We've found another turn in the path of our planned change. Update the target X and Y
                             // and allow the loop to continue.
@@ -248,7 +246,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
                         }
                     } else if (t.newDirection == DIRECTION.DOWN) {
                         s.x = t.x;
-                        s.direction = DIRECTION.DOWN;
                         if (nextTurn != null) {
                             s.y = t.y;
                             tY = s.y + dY;
@@ -257,7 +254,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
                         }
                     } else if (t.newDirection == DIRECTION.RIGHT) {
                         s.y = t.y;
-                        s.direction = DIRECTION.RIGHT;
                         if (nextTurn != null) {
                             s.x = t.x;
                             tX = s.x + dX;
@@ -266,7 +262,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
                         }
                     } else if (t.newDirection == DIRECTION.LEFT) {
                         s.y = t.y;
-                        s.direction = DIRECTION.LEFT;
                         if (nextTurn != null) {
                             s.x = t.x;
                             tX = s.x - dX;
@@ -279,7 +274,8 @@ public class SnakeEntity extends Entity implements CollisionElement {
                         t.markForDestruction();
                     }
 
-                    if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y));
+                    if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y, s));
+                    s.direction = t.newDirection;
                     t = nextTurn;
                 }
 
@@ -288,7 +284,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
                 s.x = tX;
                 s.y = tY;
 
-                if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, tX, tY));
+                if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, tX, tY, s));
             }
         }
 
@@ -332,19 +328,46 @@ public class SnakeEntity extends Entity implements CollisionElement {
         return new Rectangle(minX, minY, maxX - minX + partWidth, maxY - minY + partHeight);
     }
 
-    public boolean isCollisionBoxIntersecting(Rectangle collision) {
-        if(!collision.intersects(getBounds())) return false;
+    private boolean proveCollisionIntent(Rectangle sourceCollision, Rectangle infringedBoundary) {
+        SnakePart head = snake.getFirst();
+        Rectangle headBounds = head.getBounds();
+
+        System.out.println("Self collision detected, proving intent..");
+        System.out.println("Direction: " + head.direction);
+        System.out.println("Head bounds: " + headBounds);
+        System.out.println("Collision bounds: " + sourceCollision);
+        System.out.println("Infringed boundary: " + infringedBoundary);
+
+
+        if(head.direction == DIRECTION.UP && headBounds.y + headBounds.height <= infringedBoundary.y + infringedBoundary.height) {
+            return false;
+        } else if(head.direction == DIRECTION.DOWN && headBounds.y >= infringedBoundary.y) {
+            return false;
+        } else if(head.direction == DIRECTION.LEFT && headBounds.x + headBounds.width <= infringedBoundary.x + infringedBoundary.width) {
+            return false;
+        } else if(head.direction == DIRECTION.RIGHT && headBounds.x >= infringedBoundary.x ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public Rectangle isCollisionBoxIntersecting(Rectangle collision) {
+        if(!collision.intersects(getBounds())) return null;
 
         // Check each part of the snake, return true as soon as collision occurs.
-        for (int i = 2, snakeSize = snake.size(); i < snakeSize; i++) {
+        // Ignore the head as the heads movement will always 'collide' with it's own.. movement.. obviously.
+        for (int i = 1, snakeSize = snake.size(); i < snakeSize; i++) {
             SnakePart part = snake.get(i);
-            if (collision.intersects(part.getBounds())) {
+            if (part.getBounds().intersects(collision)) {
                 System.out.println("COLLISION: " + collision.toString() + " has collided with snake part " + i + " defined with bounds " + part.getBounds());
-                return true;
+                if(proveCollisionIntent(collision, part.getBounds())) {
+                    return part.getBounds();
+                }
             }
         }
 
-        return false;
+        return null;
     }
 
     @Override
@@ -354,10 +377,16 @@ public class SnakeEntity extends Entity implements CollisionElement {
     }
 
     @Override
-    public boolean collidedWithBy(Rectangle collision, CollisionElement source) {
+    public boolean collidedWithBy(Rectangle collision, CollisionElement source, Rectangle infringedBoundary) {
         if(source instanceof SnakeEntity) {
             if(source.equals(this)) {
-                // We ran in to ourselves
+                // So we've collided with ourselves, HOWEVER, it's possible this collision is just due to the very close
+                // proximity of the snake parts. During a turn the snake will collide with itself (as all the previous
+                // momentum in the old direction is moved to the new direction, but the dots behind are still travelling
+                // in the same direction; thus, a small moment will exist where they're 'colliding').
+
+
+
                 gameInstance.snakeDeath(playerId);
             } else {
                 // Another player ran in to us

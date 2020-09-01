@@ -38,7 +38,7 @@ public class AppleEntity extends Pickup {
     }
 
     @Override
-    public boolean collidedWithBy(Rectangle collisionBox, CollisionElement source) {
+    public boolean collidedWithBy(Rectangle collisionBox, CollisionElement source, Rectangle infringedBoundary) {
         if(source instanceof SnakeEntity) {
             // A snake collided with this pickup, apply our effect to the snake
             applyEffect((SnakeEntity)source);
