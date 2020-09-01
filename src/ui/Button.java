@@ -231,8 +231,4 @@ public class Button extends Component implements UIMouseReactive {
     public static Button createCentered(SnakeGame g, Text t, boolean horizontal, boolean vertical) {
         return createCentered(g, t, horizontal, vertical, 0, 0);
     }
-
-    public static Button createCentered(SnakeGame g, Text t) {
-        return createCentered(g, t, true, false);
-    }
 }

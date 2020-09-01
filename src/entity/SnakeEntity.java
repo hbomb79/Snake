@@ -17,6 +17,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
     protected final int startX;
     protected final int startY;
     protected final DIRECTION startDirection;
+    protected final int playerId;
 
     protected final int partWidth;
     protected final int partHeight;
@@ -103,7 +104,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
     protected LinkedList<SnakePart> snake = new LinkedList<>();
     protected LinkedList<SnakeTurn> turns = new LinkedList<>();
 
-    public SnakeEntity(SnakeGame game, int x, int y, int size, DIRECTION dir) {
+    public SnakeEntity(SnakeGame game, int id, int x, int y, int size, DIRECTION dir) {
         super(game);
 
         headImage = game.snakeHeadImage;
@@ -116,12 +117,13 @@ public class SnakeEntity extends Entity implements CollisionElement {
         startY = y;
         startSize = size;
         startDirection = dir;
+        playerId = id;
 
         increaseLength(startSize);
     }
 
-    public SnakeEntity(SnakeGame game) {
-        this(game, SnakeGame.WIDTH/2, SnakeGame.HEIGHT/2, 10, DIRECTION.UP);
+    public SnakeEntity(SnakeGame game, int id) {
+        this(game, id, SnakeGame.WIDTH/2, SnakeGame.HEIGHT/2, 10, DIRECTION.UP);
     }
 
     /*
@@ -159,6 +161,10 @@ public class SnakeEntity extends Entity implements CollisionElement {
         SnakeTurn newTurn = new SnakeTurn(head.x + offsetX, head.y + offsetY, newDirection);
         System.out.println("[TURN] Added turn at " + (head.x + offsetX) + ", " + (head.y + offsetY));
         turns.addFirst(newTurn);
+    }
+
+    public int getPlayerId() {
+        return playerId;
     }
 
     protected Rectangle createCollisionBox(int x, int y, int deltaX, int deltaY) {
@@ -205,45 +211,34 @@ public class SnakeEntity extends Entity implements CollisionElement {
             int tX = s.x + xVel;
             int tY = s.y + yVel;
 
-            System.out.println("Moving snake part " + i + " from x,y: " + sX + ", " + sY + " - to x,y: " + tX + ", " + tY);
-            System.out.println("Calculated x/y vel: " + xVel + ", " + yVel + " - direction: " + s.direction);
-
-
             // So, we know where we're trying to go (using velocity), check if this boundary intersects with a turn.
             // This boundary covers where we are, and where we're going. We use Math.min/max to ensure the rectangle
             // doesn't have a negative width and height, but instead just starts further up/left.
 
             //TODO Simplify boundary creation, potentially move to SnakePart class.
             Rectangle boundary = new Rectangle(Math.min(sX, tX), Math.min(sY, tY), Math.max( 1, Math.max(sX, tX) - Math.min(sX, tX) ), Math.max( 1, Math.max(sY, tY) - Math.min(sY, tY)));
-            System.out.println("New part; searching for turns inside boundary: " + boundary.toString());
+
             SnakeTurn t = SnakeTurn.findNextTurn(boundary, turns);
-            System.out.println("Found turn: " + t);
             if(t != null) {
                 while (t != null) {
                     xVel = s.getXVelocityCoefficient(velocity);
                     yVel = s.getYVelocityCoefficient(velocity);
-                    System.out.println("Moving snake part " + i + " from x,y: " + sX + ", " + sY + " - to x,y: " + tX + ", " + tY);
-                    System.out.println("Calculated x/y vel: " + xVel + ", " + yVel + " - direction: " + s.direction);
-                    System.out.println("Processing TURN at: " + t.x + "," + t.y + " with direction " + t.newDirection + "("+i+")");
-                    System.out.println("Is part the last? " + isLastPart);
                     // We're going to collide with a 'turn'; however we might not be landing right on it, we could be
                     // moving past it. Find the difference between the snake part and the turn and apply them so the
                     // dot moves fluidly around the 'turn/corner'.
                     int dX = Math.max(t.x, tX) - Math.min(t.x, tX);
                     int dY = Math.max(t.y, tY) - Math.min(t.y, tY);
-                    System.out.println("dX, dY: " + dX + ", " + dY);
 
                     // Before we commit to the move, check if there's another turn between this turn, and the destination
                     //TODO Simplify boundary creation, potentially move to SnakePart class.
                     boundary.setRect(Math.min(t.x, tX), Math.min(t.y, tY), Math.max(t.x, tX) - Math.min(t.x, tX), Math.max(t.y, tY) - Math.min(t.y, tY));
                     SnakeTurn nextTurn = SnakeTurn.findNextTurn(boundary, turns, t);
-                    System.out.println("Using rect " + boundary.toString() + " to search for turns");
+
                     //TODO Should be able merge blocks for same axis of movement in to one if block
                     if (t.newDirection == DIRECTION.UP) {
                         s.x = t.x;
                         s.direction = DIRECTION.UP;
                         if (nextTurn != null) {
-                            System.out.println("FOUND NEW TURN INSIDE LOOP");
                             // We've found another turn in the path of our planned change. Update the target X and Y
                             // and allow the loop to continue.
                             s.y = t.y;
@@ -255,7 +250,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
                         s.x = t.x;
                         s.direction = DIRECTION.DOWN;
                         if (nextTurn != null) {
-                            System.out.println("FOUND NEW TURN INSIDE LOOP");
                             s.y = t.y;
                             tY = s.y + dY;
                         } else {
@@ -265,7 +259,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
                         s.y = t.y;
                         s.direction = DIRECTION.RIGHT;
                         if (nextTurn != null) {
-                            System.out.println("FOUND NEW TURN INSIDE LOOP");
                             s.x = t.x;
                             tX = s.x + dX;
                         } else {
@@ -275,7 +268,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
                         s.y = t.y;
                         s.direction = DIRECTION.LEFT;
                         if (nextTurn != null) {
-                            System.out.println("FOUND NEW TURN INSIDE LOOP");
                             s.x = t.x;
                             tX = s.x - dX;
                         } else {
@@ -284,7 +276,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
                     }
 
                     if (isLastPart) {
-                        System.out.println("[DESTROY] Marked turn @ x,y: " + t.x + ", " + t.y + " for destruction");
                         t.markForDestruction();
                     }
 
@@ -356,11 +347,24 @@ public class SnakeEntity extends Entity implements CollisionElement {
 
     @Override
     public boolean collidedWithGameBoundary(Rectangle collisionBox) {
+        gameInstance.snakeDeath(playerId);
         return true;
     }
 
     @Override
     public boolean collidedWithBy(Rectangle collision, CollisionElement source) {
+        if(source instanceof SnakeEntity) {
+            if(source.equals(this)) {
+                // We ran in to ourselves
+                gameInstance.snakeDeath(playerId);
+            } else {
+                // Another player ran in to us
+                gameInstance.snakeDeath(((SnakeEntity) source).getPlayerId());
+            }
+
+            return true;
+        }
+
         return false;
     }
 

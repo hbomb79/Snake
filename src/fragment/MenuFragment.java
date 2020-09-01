@@ -5,30 +5,26 @@ import ui.Button;
 import ui.Component;
 import ui.Text;
 
-public class MenuFragment {
-    protected SnakeGame gameInstance;
-    protected Component[] components;
-
+public class MenuFragment extends Fragment {
     public MenuFragment(SnakeGame game) {
-        gameInstance = game;
-        // These components are created once per menu and are handed to the UIController when the menu is shown.
+        super(game);
+    }
+
+    @Override
+    public void createComponents() {
+        super.createComponents();
 
         Text spText = new Text("Single Player");
         Text mpText = new Text("Two Player");
         Text quitText = new Text("Quit");
 
-        Runnable startSinglePlayer = () -> game.startGame(1);
-        Runnable startTwoPlayer = () -> game.startGame(2);
+        Runnable startSinglePlayer = () -> gameInstance.startGame(1);
+        Runnable startTwoPlayer = () -> gameInstance.startGame(2);
 
         components = new Component[]{
-            Button.createCentered(game, spText, true, true, 0,-100).setCallback(startSinglePlayer),
-            Button.createCentered(game, mpText, true, true, 0, -50).setCallback(startTwoPlayer),
-            Button.createCentered(game, quitText, true, true, 0, 0).setCallback(game::quitGame)
+                Button.createCentered(gameInstance, spText, true, true, 0,-100).setCallback(startSinglePlayer),
+                Button.createCentered(gameInstance, mpText, true, true, 0, -50).setCallback(startTwoPlayer),
+                Button.createCentered(gameInstance, quitText, true, true, 0, 0).setCallback(gameInstance::quitGame)
         };
-    }
-
-    public void setupUI() {
-        // Hand off components to UIController to insert them in to the event flow
-        gameInstance.getUIController().populate( components );
     }
 }

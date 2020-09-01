@@ -1,8 +1,10 @@
 package controllers;
 
 import entity.Entity;
+import entity.Pickup;
 import entity.SnakeEntity;
 import exception.InvalidParameterException;
+import main.RandomPoint;
 import main.SnakeGame;
 
 import java.awt.*;
@@ -10,11 +12,10 @@ import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
 public class EntityController extends Controller {
-    SnakeGame gameInstance;
-
     protected int playerCount;
-    protected SnakeEntity[] players;
-    protected LinkedList<Entity> pickups = new LinkedList<>();
+    protected final LinkedList<Entity> entities = new LinkedList<>();
+    protected final LinkedList<Entity> entitiesToDestroy = new LinkedList<>();
+    protected final LinkedList<Entity> entitiesToSpawn = new LinkedList<>();
 
     public EntityController(SnakeGame g) {
         super(g);
@@ -24,29 +25,49 @@ public class EntityController extends Controller {
         if(count < 1 || count > 2) {
             throw new InvalidParameterException("Cannot init EntityController with player count of: " + count + ". Expected 1 or 2.");
         }
-        players = new SnakeEntity[count];
+
+        entities.clear();
         playerCount = count;
-
         for(int i = 0; i < count; i++) {
-            System.out.println("Inserting snake player in to index: " + i);
-            players[i] = new SnakeEntity(gameInstance);
+            entities.add(new SnakeEntity(gameInstance, i));
         }
-
-        System.out.println(players[0]);
     }
 
     public void update(double dt) {
-        if(players == null) return;
-        for(SnakeEntity player : players) {
-            player.update(dt);
+        for (Entity entity : entities) {
+            System.out.println("Updating " + entity);
+            entity.update(dt);
         }
+
+        destroyPickups();
+        spawnPickups();
     }
 
     public void redraw() {
-        if(players == null) return;
-        for(SnakeEntity player : players) {
-            player.paintComponent();
+        for(Entity entity : entities) {
+            entity.paintComponent();
         }
+    }
+
+    protected void destroyPickups() {
+        entities.removeAll(entitiesToDestroy);
+        entitiesToDestroy.clear();
+    }
+
+    protected void spawnPickups() {
+        entities.addAll(entitiesToSpawn);
+        entitiesToSpawn.clear();
+    }
+
+    public SnakeEntity getPlayer(int playerId) {
+        if(playerCount < 1 || playerId > playerCount || playerId < 0)
+            return null;
+        for(Entity entity : entities) {
+            if(entity instanceof SnakeEntity && ((SnakeEntity) entity).getPlayerId() == playerId)
+                return (SnakeEntity)entity;
+        }
+
+        return null;
     }
 
     public int getPlayerCount() {
@@ -54,7 +75,7 @@ public class EntityController extends Controller {
     }
 
     public void keyPressed(KeyEvent event) {
-        if(players == null) return;
+        SnakeEntity[] players = {getPlayer(0), getPlayer(1)};
         int keycode = event.getKeyCode();
         int i = 0;
         switch(keycode) {
@@ -87,12 +108,25 @@ public class EntityController extends Controller {
                 break;
 
             case KeyEvent.VK_ESCAPE:
-                //TODO Handle pause menu
+                gameInstance.pauseGame();
                 break;
         }
     };
 
-    public void spawnEntity(Entity e, Point p) {
+    public void spawnPickupRandom(Pickup e) {
+        RandomPoint p = new RandomPoint(e);
+        p.selectPoint();
+        spawnPickup(e, p);
+    }
 
+    public void spawnPickup(Pickup e, Point p) {
+        e.setX(p.x);
+        e.setY(p.y);
+
+        entitiesToSpawn.add(e);
+    }
+
+    public void destroyPickup(Pickup p) {
+        entitiesToDestroy.add(p);
     }
 }

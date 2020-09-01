@@ -4,39 +4,54 @@ import interfaces.CollisionElement;
 import main.SnakeGame;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
-public class AppleEntity extends Entity {
+public class AppleEntity extends Pickup {
+    BufferedImage appleImage;
+    public AppleEntity(SnakeGame game, int x, int y) {
+        super(game, x, y);
+    }
+
     public AppleEntity(SnakeGame game) {
         super(game);
     }
 
     @Override
-    public boolean collidedWithGameBoundary(Rectangle collisionBox) {
-        return false;
+    public void init() {
+        appleImage = gameInstance.appleImage;
+        width = appleImage.getWidth();
+        height = appleImage.getHeight();
+    }
+
+    @Override
+    public void applyEffect(Entity e) {
+        // Super will destroy the pickup
+        super.applyEffect(e);
+
+        // We will apply the increased length to the snake
+        if(e instanceof SnakeEntity) {
+            ((SnakeEntity) e).increaseLength(1);
+        }
+
+        // Inform the game to create another apple
+        gameInstance.respawnApple();
     }
 
     @Override
     public boolean collidedWithBy(Rectangle collisionBox, CollisionElement source) {
+        if(source instanceof SnakeEntity) {
+            // A snake collided with this pickup, apply our effect to the snake
+            applyEffect((SnakeEntity)source);
+            return true;
+        }
+
+        // Any other collision (such as a RandomPoint) is not relevant; no action required, and we
+        // return false to inform the controller that we are not blocking this collision from propagating.
         return false;
-    }
-
-    @Override
-    public boolean isCollisionBoxIntersecting(Rectangle collision) {
-        return false;
-    }
-
-    @Override
-    public Rectangle getBounds() {
-        return null;
-    }
-
-    @Override
-    public void update(double dt) {
-
     }
 
     @Override
     public void paintComponent() {
-
+        gameInstance.drawImage(appleImage, x, y);
     }
 }

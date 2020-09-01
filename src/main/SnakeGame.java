@@ -13,8 +13,11 @@ import controllers.CollisionController;
 import controllers.EffectController;
 import controllers.EntityController;
 import controllers.UIController;
+import entity.AppleEntity;
 import exception.InvalidParameterException;
+import fragment.DeathFragment;
 import fragment.MenuFragment;
+import fragment.PauseFragment;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -29,18 +32,17 @@ public class SnakeGame extends GameEngine {
     public enum STATE {
         MENU,
         GAME,
-        DEATH
+        DEATH,
+        PAUSE
     }
 
     public final BufferedImage appleImage;
     public final BufferedImage snakeHeadImage;
     public final BufferedImage snakeBodyImage;
 
-    protected int score = 0;
-    protected int lives = 4;
-    protected int gameSpeed = 1;
     protected int playerCount = 0;
     protected STATE gameState = STATE.MENU;
+    protected STATE nextState;
     protected Random randomGenerator;
 
     protected UIController ui;
@@ -50,7 +52,9 @@ public class SnakeGame extends GameEngine {
 
     private boolean isGraphicsInitialised = false;
 
-    protected MenuFragment menu;
+    protected MenuFragment menuFragment;
+    protected PauseFragment pauseFragment;
+    protected DeathFragment deathFragment;
 
     protected static SnakeGame gameInstance;
 
@@ -61,6 +65,11 @@ public class SnakeGame extends GameEngine {
         appleImage = loadImage("resources/apple.png");
         snakeHeadImage = loadImage("resources/head.png");
         snakeBodyImage = loadImage("resources/dot.png");
+    }
+
+    public static void main(String[] args) {
+        // Entry point for game. Use this method to retrieve the singleton instance of SnakeGame.
+        SnakeGame.getGameInstance();
     }
 
     @Override
@@ -75,13 +84,20 @@ public class SnakeGame extends GameEngine {
     protected void graphicsReady() {
         if( !isGraphicsInitialised ) return;
 
-        menu = new MenuFragment(this);
+        menuFragment = new MenuFragment(this);
+        deathFragment = new DeathFragment(this);
+        pauseFragment = new PauseFragment(this);
 
         changeGameState(STATE.MENU);
     }
 
     @Override
     public void update(double dt) {
+        if(nextState != null) {
+            changeGameState(nextState);
+            nextState = null;
+        }
+
         if(gameState == STATE.GAME) {
             entity.update(dt);
         }
@@ -97,13 +113,15 @@ public class SnakeGame extends GameEngine {
         changeBackgroundColor(black);
         clearBackground(WIDTH, HEIGHT);
 
-        entity.redraw();
-        ui.redraw();
-    }
+        if(gameState == STATE.GAME || gameState == STATE.PAUSE)
+            entity.redraw();
 
-    public static void main(String[] args) {
-        // Entry point for game. Use this method to retrieve the singleton instance of SnakeGame.
-        SnakeGame.getGameInstance();
+        if(gameState == STATE.PAUSE) {
+            changeBackgroundColor(new Color(0,0,0, 59));
+            drawSolidRectangle(1, 1, WIDTH, HEIGHT);
+        }
+
+        ui.redraw();
     }
 
     // Called whenever a key is pressed
@@ -132,23 +150,45 @@ public class SnakeGame extends GameEngine {
         ui.mouseMoved(event);
     }
 
-    public void changeGameState(STATE s) {
-        ui.reset();
+    public void changeGameState(STATE s, boolean resetUi) {
+        if(resetUi) ui.reset();
         if(s == STATE.MENU) {
-            menu.setupUI();
-        } else if(s == STATE.GAME) {
-            //TODO
+            menuFragment.deliverUI();
         } else if(s == STATE.DEATH) {
-            //TODO
+            deathFragment.deliverUI();
+        } else if(s == STATE.PAUSE) {
+            //TODO preserve game state and display elements above (preferably above a semi-transparent background)
+            pauseFragment.deliverUI();
         }
 
         gameState = s;
+    }
+
+    public void changeGameState(STATE s) {
+        this.changeGameState(s, true);
+    }
+
+    public void scheduleGameStateChange(STATE s) {
+        nextState = s;
+    }
+
+    public void pauseGame() {
+        if(gameState == STATE.MENU) return;
+
+        changeGameState(gameState == STATE.PAUSE ? STATE.MENU : STATE.PAUSE);
+    }
+
+    public void snakeDeath(int playerId) {
+        deathFragment.providePlayerId(playerId);
+        changeGameState(STATE.DEATH);
     }
 
     public void startGame(int c) {
         try {
             playerCount = c;
             entity.initWithPlayers(playerCount);
+            respawnApple();
+
             changeGameState(STATE.GAME);
         } catch (InvalidParameterException e) {
             System.out.println("Fatal exception: " + e.getMessage());
@@ -156,6 +196,10 @@ public class SnakeGame extends GameEngine {
 
             System.exit(-1);
         }
+    }
+
+    public void respawnApple() {
+        entity.spawnPickupRandom(new AppleEntity(this));
     }
 
     public void quitGame() {
