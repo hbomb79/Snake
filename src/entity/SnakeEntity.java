@@ -54,7 +54,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
         }
 
         public Rectangle getBounds() {
-            return new Rectangle(x, y, master.partWidth, master.partHeight);
+            return new Rectangle(x, y, master.partWidth-1, master.partHeight-1);
         }
     }
 
@@ -333,11 +333,13 @@ public class SnakeEntity extends Entity implements CollisionElement {
     }
 
     public boolean isCollisionBoxIntersecting(Rectangle collision) {
-        if(collision.intersects(getBounds())) return false;
+        if(!collision.intersects(getBounds())) return false;
 
         // Check each part of the snake, return true as soon as collision occurs.
-        for(SnakePart part : snake) {
-            if(collision.intersects(part.getBounds())) {
+        for (int i = 2, snakeSize = snake.size(); i < snakeSize; i++) {
+            SnakePart part = snake.get(i);
+            if (collision.intersects(part.getBounds())) {
+                System.out.println("COLLISION: " + collision.toString() + " has collided with snake part " + i + " defined with bounds " + part.getBounds());
                 return true;
             }
         }
