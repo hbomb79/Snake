@@ -32,7 +32,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
         LEFT
     }
 
-    private static class SnakePart {
+    private static class SnakePart implements Cloneable {
         SnakeEntity master;
         int x;
         int y;
@@ -55,6 +55,16 @@ public class SnakeEntity extends Entity implements CollisionElement {
 
         public Rectangle getBounds() {
             return new Rectangle(x, y, master.partWidth, master.partHeight);
+        }
+
+        @Override
+        public String toString() {
+            return "SnakePart{" +
+                    "master=" + master +
+                    ", x=" + x +
+                    ", y=" + y +
+                    ", direction=" + direction +
+                    '}';
         }
     }
 
