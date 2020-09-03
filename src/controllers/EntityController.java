@@ -106,10 +106,6 @@ public class EntityController extends Controller {
             case KeyEvent.VK_A:
                 players[Math.min(i, playerCount-1)].changeDirection(SnakeEntity.DIRECTION.LEFT);
                 break;
-
-            case KeyEvent.VK_ESCAPE:
-                gameInstance.pauseGame();
-                break;
         }
     };
 

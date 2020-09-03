@@ -23,10 +23,9 @@ public class RandomPoint extends Point implements CollisionElement {
         Point p;
         do {
             p = g.generateRandomPoint();
+            x = p.x;
+            y = p.y;
         } while (c.checkCollision(this, getBounds()));
-
-        x = p.x;
-        y = p.y;
     }
 
     @Override

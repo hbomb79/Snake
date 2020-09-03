@@ -32,8 +32,7 @@ public class SnakeGame extends GameEngine {
     public enum STATE {
         MENU,
         GAME,
-        DEATH,
-        PAUSE
+        DEATH
     }
 
     public final BufferedImage appleImage;
@@ -43,6 +42,7 @@ public class SnakeGame extends GameEngine {
     protected int playerCount = 0;
     protected STATE gameState = STATE.MENU;
     protected STATE nextState;
+    protected boolean paused = false;
     protected Random randomGenerator;
 
     protected UIController ui;
@@ -84,9 +84,9 @@ public class SnakeGame extends GameEngine {
     protected void graphicsReady() {
         if( !isGraphicsInitialised ) return;
 
-        menuFragment = new MenuFragment(this);
-        deathFragment = new DeathFragment(this);
-        pauseFragment = new PauseFragment(this);
+        menuFragment =  (MenuFragment)ui.registerFragment(new MenuFragment(this));
+        deathFragment = (DeathFragment)ui.registerFragment(new DeathFragment(this));
+        pauseFragment = (PauseFragment)ui.registerFragment(new PauseFragment(this));
 
         changeGameState(STATE.MENU);
     }
@@ -98,9 +98,14 @@ public class SnakeGame extends GameEngine {
             nextState = null;
         }
 
-        if(gameState == STATE.GAME) {
+        if(paused)
+            pauseFragment.activate();
+
+        if(gameState == STATE.GAME && !paused) {
             entity.update(dt);
         }
+
+        ui.update(dt);
     }
 
     @Override
@@ -113,20 +118,21 @@ public class SnakeGame extends GameEngine {
         changeBackgroundColor(black);
         clearBackground(WIDTH, HEIGHT);
 
-        if(gameState == STATE.GAME || gameState == STATE.PAUSE)
+        if(gameState == STATE.GAME)
             entity.redraw();
-
-        if(gameState == STATE.PAUSE) {
-            changeBackgroundColor(new Color(0,0,0, 59));
-            drawSolidRectangle(1, 1, WIDTH, HEIGHT);
-        }
 
         ui.redraw();
     }
 
     // Called whenever a key is pressed
     public void keyPressed(KeyEvent event) {
-        entity.keyPressed(event);
+        if(event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            paused = !paused;
+            // Refresh fragment-based scenes
+            changeGameState(gameState);
+        } else if(!paused) {
+            entity.keyPressed(event);
+        }
     }
 
     // Called whenever a key is released
@@ -151,14 +157,11 @@ public class SnakeGame extends GameEngine {
     }
 
     public void changeGameState(STATE s, boolean resetUi) {
-        if(resetUi) ui.reset();
+        if(resetUi) ui.deactivateAllFragments();
         if(s == STATE.MENU) {
-            menuFragment.deliverUI();
+            menuFragment.activate();
         } else if(s == STATE.DEATH) {
-            deathFragment.deliverUI();
-        } else if(s == STATE.PAUSE) {
-            //TODO preserve game state and display elements above (preferably above a semi-transparent background)
-            pauseFragment.deliverUI();
+            deathFragment.activate();
         }
 
         gameState = s;
@@ -173,9 +176,9 @@ public class SnakeGame extends GameEngine {
     }
 
     public void pauseGame() {
-        if(gameState == STATE.MENU) return;
+        if(gameState != STATE.GAME) return;
 
-        changeGameState(gameState == STATE.PAUSE ? STATE.MENU : STATE.PAUSE);
+        paused = !paused;
     }
 
     public void snakeDeath(int playerId) {
@@ -189,7 +192,7 @@ public class SnakeGame extends GameEngine {
             entity.initWithPlayers(playerCount);
             respawnApple();
 
-            changeGameState(STATE.GAME);
+            scheduleGameStateChange(STATE.GAME);
         } catch (InvalidParameterException e) {
             System.out.println("Fatal exception: " + e.getMessage());
             e.printStackTrace();
@@ -199,7 +202,7 @@ public class SnakeGame extends GameEngine {
     }
 
     public void respawnApple() {
-        entity.spawnPickupRandom(new AppleEntity(this));
+        entity.spawnPickupRandom(new ApplePickup(this));
     }
 
     public void quitGame() {
