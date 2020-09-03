@@ -13,7 +13,7 @@ import controllers.CollisionController;
 import controllers.EffectController;
 import controllers.EntityController;
 import controllers.UIController;
-import entity.AppleEntity;
+import entity.ApplePickup;
 import exception.InvalidParameterException;
 import fragment.DeathFragment;
 import fragment.MenuFragment;
@@ -250,39 +250,5 @@ public class SnakeGame extends GameEngine {
 
     public EntityController getEntityController() {
         return entity;
-    }
-
-    /* Graphics Helper Functions */
-    public void drawCenteredText(double y, String s) {
-        // Draw text on the screen
-        double x = calculateCenteredText(s);
-        mGraphics.drawString(s, (int)x, (int)y);
-    }
-
-    public void drawCenteredText(double y, String s, String font) {
-        // Draw text on the screen
-        double x = calculateCenteredText(s, font);
-        mGraphics.drawString(s, (int)x, (int)y);
-    }
-
-    public void drawCenteredText(double y, String s, String font, int size) {
-        // Draw text on the screen
-        double x = calculateCenteredText(s, font, size);
-        mGraphics.drawString(s, (int)x, (int)y);
-    }
-
-    private double calculateCenteredText(String s) {
-        mGraphics.setFont(new Font("Arial", Font.PLAIN, 40));
-        return (WIDTH/2.0) - (mGraphics.getFontMetrics().stringWidth(s)/2.0);
-    }
-
-    private double calculateCenteredText(String s, String font) {
-        mGraphics.setFont(new Font(font, Font.PLAIN, 40));
-        return (WIDTH/2.0) - (mGraphics.getFontMetrics().stringWidth(s)/2.0);
-    }
-
-    private double calculateCenteredText(String s, String font, int size) {
-        mGraphics.setFont(new Font(font, Font.PLAIN, size));
-        return (WIDTH/2.0) - (mGraphics.getFontMetrics().stringWidth(s)/2.0);
     }
 }

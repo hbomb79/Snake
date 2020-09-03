@@ -158,30 +158,15 @@ public class SnakeEntity extends Entity implements CollisionElement {
 
         int offsetX = head.direction == DIRECTION.LEFT ? -1 : (head.direction == DIRECTION.RIGHT ? 1 : 0);
         int offsetY = head.direction == DIRECTION.UP ? -1 : (head.direction == DIRECTION.DOWN ? 1 : 0);
-        SnakeTurn newTurn = new SnakeTurn(head.x + offsetX, head.y + offsetY, newDirection);
-        System.out.println("[TURN] Added turn at " + (head.x + offsetX) + ", " + (head.y + offsetY));
-        turns.addFirst(newTurn);
+        turns.addFirst(new SnakeTurn(head.x + offsetX, head.y + offsetY, newDirection));
     }
 
     public int getPlayerId() {
         return playerId;
     }
 
-    protected Rectangle createCollisionBox(int x, int y, int deltaX, int deltaY, SnakePart part) {
-        System.out.println("x: " + x + ", y: " + y + ", dX: " + deltaX + ", dY: " + deltaY);
-        int minX = Math.min(x, deltaX);
-        int maxX = Math.max(x, deltaX);
-        int minY = Math.min(y, deltaY);
-        int maxY = Math.max(y, deltaY);
-        int width = Math.max(1, maxX - minX);
-        int height = Math.max(1, maxY - minY);
-        int xVel = part.getXVelocityCoefficient(velocity);
-        int yVel = part.getYVelocityCoefficient(velocity);
-
-        Rectangle collision = new Rectangle(minX, minY, partWidth, partHeight);
-
-        System.out.println("New collision box created: " + collision.toString());
-        return collision;
+    protected Rectangle createCollisionBox(int x, int y, int deltaX, int deltaY) {
+        return new Rectangle(Math.min(x, deltaX), Math.min(y, deltaY), partWidth, partHeight);
     }
 
     //TODO Major cleanup of this method required
@@ -274,7 +259,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
                         t.markForDestruction();
                     }
 
-                    if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y, s));
+                    if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y));
                     s.direction = t.newDirection;
                     t = nextTurn;
                 }
@@ -284,7 +269,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
                 s.x = tX;
                 s.y = tY;
 
-                if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, tX, tY, s));
+                if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, tX, tY));
             }
         }
 
@@ -332,24 +317,13 @@ public class SnakeEntity extends Entity implements CollisionElement {
         SnakePart head = snake.getFirst();
         Rectangle headBounds = head.getBounds();
 
-        System.out.println("Self collision detected, proving intent..");
-        System.out.println("Direction: " + head.direction);
-        System.out.println("Head bounds: " + headBounds);
-        System.out.println("Collision bounds: " + sourceCollision);
-        System.out.println("Infringed boundary: " + infringedBoundary);
-
-
         if(head.direction == DIRECTION.UP && headBounds.y + headBounds.height <= infringedBoundary.y + infringedBoundary.height) {
             return false;
         } else if(head.direction == DIRECTION.DOWN && headBounds.y >= infringedBoundary.y) {
             return false;
         } else if(head.direction == DIRECTION.LEFT && headBounds.x + headBounds.width <= infringedBoundary.x + infringedBoundary.width) {
             return false;
-        } else if(head.direction == DIRECTION.RIGHT && headBounds.x >= infringedBoundary.x ) {
-            return false;
-        }
-
-        return true;
+        } else return head.direction != DIRECTION.RIGHT || headBounds.x < infringedBoundary.x;
     }
 
     public Rectangle isCollisionBoxIntersecting(Rectangle collision) {
@@ -359,11 +333,8 @@ public class SnakeEntity extends Entity implements CollisionElement {
         // Ignore the head as the heads movement will always 'collide' with it's own.. movement.. obviously.
         for (int i = 1, snakeSize = snake.size(); i < snakeSize; i++) {
             SnakePart part = snake.get(i);
-            if (part.getBounds().intersects(collision)) {
-                System.out.println("COLLISION: " + collision.toString() + " has collided with snake part " + i + " defined with bounds " + part.getBounds());
-                if(proveCollisionIntent(collision, part.getBounds())) {
-                    return part.getBounds();
-                }
+            if (part.getBounds().intersects(collision) && proveCollisionIntent(collision, part.getBounds())) {
+                return part.getBounds();
             }
         }
 
@@ -380,13 +351,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
     public boolean collidedWithBy(Rectangle collision, CollisionElement source, Rectangle infringedBoundary) {
         if(source instanceof SnakeEntity) {
             if(source.equals(this)) {
-                // So we've collided with ourselves, HOWEVER, it's possible this collision is just due to the very close
-                // proximity of the snake parts. During a turn the snake will collide with itself (as all the previous
-                // momentum in the old direction is moved to the new direction, but the dots behind are still travelling
-                // in the same direction; thus, a small moment will exist where they're 'colliding').
-
-
-
                 gameInstance.snakeDeath(playerId);
             } else {
                 // Another player ran in to us
@@ -410,9 +374,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
     public void update(double dt) {
         // Move depending on velocity
         LinkedList<Rectangle> collisionBoxes = moveSnake();
-        for(Rectangle b : collisionBoxes) {
-            System.out.println(b.toString());
-        }
         SnakeTurn.destroyDwindling(turns);
 
         checkCollisions(collisionBoxes);
@@ -426,7 +387,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
         boolean head = true;
         for(SnakePart part : snake) {
             if(head) {
-                System.out.println("Drawing image HEAD at x,y: " + part.x + ", " + part.y);
                 gameInstance.drawImage(headImage, part.x, part.y);
                 head = false;
             } else {
