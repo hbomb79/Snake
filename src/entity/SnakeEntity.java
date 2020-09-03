@@ -146,7 +146,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
         int offsetX = oD == DIRECTION.LEFT ? 1 : (oD == DIRECTION.RIGHT ? -1 : 0);
         int offsetY = oD == DIRECTION.UP ? 1 : (oD == DIRECTION.DOWN ? -1 : 0);
         for (int i = 0; i < amount; i++) {
-            snake.add(new SnakePart(this,oX + (partWidth*i*offsetX), oY + (partHeight*i*offsetY), oD));
+            snake.addLast(new SnakePart(this,oX + (partWidth*(i+1)*offsetX), oY + (partHeight*(i+1)*offsetY), oD));
         }
     }
 
