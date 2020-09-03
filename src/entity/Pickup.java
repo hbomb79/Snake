@@ -1,5 +1,6 @@
 package entity;
 
+import interfaces.CollisionElement;
 import main.SnakeGame;
 
 import java.awt.*;
@@ -70,14 +71,19 @@ public abstract class Pickup extends Entity {
         return height;
     }
 
+    @Override
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }
 
-    public Rectangle isCollisionBoxIntersecting(Rectangle collision) {
+    @Override
+    public Rectangle isCollisionBoxIntersecting(Rectangle collision, CollisionElement source) {
         return getBounds().intersects(collision) ? getBounds() : null;
     }
 
+    @Override
     public boolean collidedWithGameBoundary(Rectangle collisionBox) { return false; }
+
+    @Override
     public void update(double dt) {}
 }

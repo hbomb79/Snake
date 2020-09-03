@@ -39,7 +39,7 @@ public class RandomPoint extends Point implements CollisionElement {
     }
 
     @Override
-    public Rectangle isCollisionBoxIntersecting(Rectangle collision) {
+    public Rectangle isCollisionBoxIntersecting(Rectangle collision, CollisionElement source) {
         return null;
     }
 

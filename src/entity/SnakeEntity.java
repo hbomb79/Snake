@@ -32,7 +32,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
         LEFT
     }
 
-    private static class SnakePart implements Cloneable {
+    private static class SnakePart {
         SnakeEntity master;
         int x;
         int y;
@@ -55,16 +55,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
 
         public Rectangle getBounds() {
             return new Rectangle(x, y, master.partWidth, master.partHeight);
-        }
-
-        @Override
-        public String toString() {
-            return "SnakePart{" +
-                    "master=" + master +
-                    ", x=" + x +
-                    ", y=" + y +
-                    ", direction=" + direction +
-                    '}';
         }
     }
 
@@ -133,7 +123,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
     }
 
     public SnakeEntity(SnakeGame game, int id) {
-        this(game, id, SnakeGame.WIDTH/2, SnakeGame.HEIGHT/2, 10, DIRECTION.UP);
+        this(game, id, 100*(id-1) + SnakeGame.WIDTH/2, SnakeGame.HEIGHT/2, 10, DIRECTION.UP);
     }
 
     /*
@@ -336,14 +326,15 @@ public class SnakeEntity extends Entity implements CollisionElement {
         } else return head.direction != DIRECTION.RIGHT || headBounds.x < infringedBoundary.x;
     }
 
-    public Rectangle isCollisionBoxIntersecting(Rectangle collision) {
+    @Override
+    public Rectangle isCollisionBoxIntersecting(Rectangle collision, CollisionElement source) {
         if(!collision.intersects(getBounds())) return null;
 
         // Check each part of the snake, return true as soon as collision occurs.
         // Ignore the head as the heads movement will always 'collide' with it's own.. movement.. obviously.
         for (int i = 1, snakeSize = snake.size(); i < snakeSize; i++) {
             SnakePart part = snake.get(i);
-            if (part.getBounds().intersects(collision) && proveCollisionIntent(collision, part.getBounds())) {
+            if (part.getBounds().intersects(collision) && (!source.equals(this) || proveCollisionIntent(collision, part.getBounds()))) {
                 return part.getBounds();
             }
         }

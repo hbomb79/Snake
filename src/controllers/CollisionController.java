@@ -26,7 +26,7 @@ public class CollisionController extends Controller {
         // Check with the entity controller for currently on-map entities
         for(Entity p : entities.entities) {
             System.out.println("Asking " + p + " if this box collides with it");
-            Rectangle collidedWith = p.isCollisionBoxIntersecting(collisionBox);
+            Rectangle collidedWith = p.isCollisionBoxIntersecting(collisionBox, source);
             if(collidedWith != null) {
                 if(p.collidedWithBy(collisionBox, source, collidedWith)) {
                     return true;

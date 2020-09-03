@@ -12,9 +12,7 @@ public class Label extends ColouredComponent {
     }
 
     @Override
-    public void update(double dt) {
-
-    }
+    public void update(double dt) {}
 
     @Override
     public void paintComponent() {

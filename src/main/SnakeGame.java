@@ -40,6 +40,7 @@ public class SnakeGame extends GameEngine {
     public final BufferedImage snakeBodyImage;
 
     protected int playerCount = 0;
+    protected Player[] players;
     protected STATE gameState = STATE.MENU;
     protected STATE nextState;
     protected boolean paused = false;
@@ -126,7 +127,7 @@ public class SnakeGame extends GameEngine {
 
     // Called whenever a key is pressed
     public void keyPressed(KeyEvent event) {
-        if(event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if(event.getKeyCode() == KeyEvent.VK_ESCAPE && gameState == STATE.GAME) {
             paused = !paused;
             // Refresh fragment-based scenes
             changeGameState(gameState);
@@ -175,30 +176,20 @@ public class SnakeGame extends GameEngine {
         nextState = s;
     }
 
-    public void pauseGame() {
-        if(gameState != STATE.GAME) return;
-
-        paused = !paused;
-    }
-
     public void snakeDeath(int playerId) {
         deathFragment.providePlayerId(playerId);
         changeGameState(STATE.DEATH);
     }
 
     public void startGame(int c) {
-        try {
-            playerCount = c;
-            entity.initWithPlayers(playerCount);
-            respawnApple();
+        playerCount = c;
+        players = new Player[c];
+        for(int i = 0; i < c; i++) players[i] = new Player(i);
 
-            scheduleGameStateChange(STATE.GAME);
-        } catch (InvalidParameterException e) {
-            System.out.println("Fatal exception: " + e.getMessage());
-            e.printStackTrace();
+        entity.initWithPlayers(players);
+        respawnApple();
 
-            System.exit(-1);
-        }
+        scheduleGameStateChange(STATE.GAME);
     }
 
     public void respawnApple() {

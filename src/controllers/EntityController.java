@@ -4,6 +4,7 @@ import entity.Entity;
 import entity.Pickup;
 import entity.SnakeEntity;
 import exception.InvalidParameterException;
+import main.Player;
 import main.RandomPoint;
 import main.SnakeGame;
 
@@ -21,15 +22,14 @@ public class EntityController extends Controller {
         super(g);
     }
 
-    public void initWithPlayers(int count) throws InvalidParameterException {
-        if(count < 1 || count > 2) {
-            throw new InvalidParameterException("Cannot init EntityController with player count of: " + count + ". Expected 1 or 2.");
-        }
+    public void initWithPlayers(Player[] players) {
 
         entities.clear();
-        playerCount = count;
-        for(int i = 0; i < count; i++) {
-            entities.add(new SnakeEntity(gameInstance, i));
+        playerCount = players.length;
+        for(int i = 0; i < playerCount; i++) {
+            SnakeEntity e = new SnakeEntity(gameInstance, i);
+            players[i].assignSnake(e);
+            entities.add(e);
         }
     }
 
