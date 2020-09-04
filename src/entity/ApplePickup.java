@@ -29,19 +29,20 @@ public class ApplePickup extends Pickup {
     public void applyEffect(Entity e) {
         // Super will destroy the pickup
         super.applyEffect(e);
-
-        // We will apply the increased length to the snake
-        if(e instanceof SnakeEntity) {
-            ((SnakeEntity) e).increaseLength(1);
-        }
-
         // Inform the game to create another apple
         gameInstance.respawnApple();
 
-        // Spawn a text effect
-        Text t = new Text("+1", "Arial", 10);
-        TextFadeEffect fx = new TextFadeEffect(x, y, t, new Color(231, 210, 93), 10);
-        gameInstance.getEffectsController().spawnEffect(fx);
+        // We will apply the increased length to the snake
+        if(e instanceof SnakeEntity) {
+            SnakeEntity snake = (SnakeEntity) e;
+            snake.increaseLength(1);
+            snake.getPlayer().increaseScore(10);
+
+            // Spawn a text effect
+            Text t = new Text("+10", "Arial", 10);
+            TextFadeEffect fx = new TextFadeEffect(x, y, t, new Color(231, 210, 93), 10);
+            gameInstance.getEffectsController().spawnEffect(fx);
+        }
     }
 
     @Override

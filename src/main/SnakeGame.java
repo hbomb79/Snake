@@ -16,6 +16,7 @@ import controllers.UIController;
 import entity.ApplePickup;
 import exception.InvalidParameterException;
 import fragment.DeathFragment;
+import fragment.GameFragment;
 import fragment.MenuFragment;
 import fragment.PauseFragment;
 
@@ -56,6 +57,7 @@ public class SnakeGame extends GameEngine {
     protected MenuFragment menuFragment;
     protected PauseFragment pauseFragment;
     protected DeathFragment deathFragment;
+    protected GameFragment gameFragment;
 
     protected static SnakeGame gameInstance;
 
@@ -89,6 +91,7 @@ public class SnakeGame extends GameEngine {
         menuFragment =  (MenuFragment)ui.registerFragment(new MenuFragment(this));
         deathFragment = (DeathFragment)ui.registerFragment(new DeathFragment(this));
         pauseFragment = (PauseFragment)ui.registerFragment(new PauseFragment(this));
+        gameFragment =  (GameFragment)ui.registerFragment(new GameFragment(this));
 
         changeGameState(STATE.MENU);
     }
@@ -165,6 +168,8 @@ public class SnakeGame extends GameEngine {
             menuFragment.activate();
         } else if(s == STATE.DEATH) {
             deathFragment.activate();
+        } else if(s == STATE.GAME) {
+            gameFragment.activate();
         }
 
         gameState = s;

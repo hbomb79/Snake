@@ -363,6 +363,8 @@ public class SnakeEntity extends Entity implements CollisionElement {
         SnakeTurn.destroyDwindling(turns);
 
         checkCollisions(collisionBoxes);
+
+        getPlayer().update(dt);
     }
 
     private void checkCollisions(LinkedList<Rectangle> collisionBoxes) {

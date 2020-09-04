@@ -37,6 +37,10 @@ public class Label extends ColouredComponent {
         return text.getRenderedHeight();
     }
 
+    public Text getText() {
+        return text;
+    }
+
     @Override
     public Label center(boolean horizontal, boolean vertical, int xOffset, int yOffset) {
         return (Label)super.center(horizontal, vertical, xOffset, yOffset);
