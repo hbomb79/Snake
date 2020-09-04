@@ -11,6 +11,7 @@ public abstract class Pickup extends Entity {
     protected int width;
     protected int height;
     protected boolean toBeDestroyed = false;
+    protected int spawnDeadzone = 50;
 
     public Pickup(SnakeGame game, int pX, int pY) {
         super(game);
@@ -83,6 +84,11 @@ public abstract class Pickup extends Entity {
 
     @Override
     public boolean collidedWithGameBoundary(Rectangle collisionBox) { return false; }
+
+    public boolean checkSpawnPoint(int x, int y) {
+        Rectangle eligibleZone = new Rectangle(spawnDeadzone, spawnDeadzone, SnakeGame.WIDTH - (spawnDeadzone*2), SnakeGame.HEIGHT - (spawnDeadzone*2));
+        return eligibleZone.contains(x,y);
+    }
 
     @Override
     public void update(double dt) {}

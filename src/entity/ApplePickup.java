@@ -39,8 +39,8 @@ public class ApplePickup extends Pickup {
             snake.getPlayer().increaseScore(10);
 
             // Spawn a text effect
-            Text t = new Text("+10", "Arial", 10);
-            TextFadeEffect fx = new TextFadeEffect(x, y, t, new Color(231, 210, 93), 10);
+            Text t = new Text("+10", "Arial", 14);
+            TextFadeEffect fx = new TextFadeEffect(x, y, t, new Color(224, 192, 68), 10);
             gameInstance.getEffectsController().spawnEffect(fx);
         }
     }

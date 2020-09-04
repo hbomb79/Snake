@@ -9,11 +9,14 @@ import java.awt.*;
 public class RandomPoint extends Point implements CollisionElement {
     protected int width;
     protected int height;
+    protected Pickup pickup;
 
-    public RandomPoint(Pickup e) {
+    public RandomPoint(Pickup pickup) {
         super();
-        width = e.getWidth();
-        height = e.getHeight();
+
+        width = pickup.getWidth();
+        height = pickup.getHeight();
+        this.pickup = pickup;
     }
 
     public void selectPoint() {
@@ -25,7 +28,7 @@ public class RandomPoint extends Point implements CollisionElement {
             p = g.generateRandomPoint();
             x = p.x;
             y = p.y;
-        } while (c.checkCollision(this, getBounds()));
+        } while (!pickup.checkSpawnPoint(x, y) || c.checkCollision(this, getBounds()));
     }
 
     @Override

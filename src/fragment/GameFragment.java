@@ -29,10 +29,6 @@ public class GameFragment extends Fragment {
         components = new Component[] { playerOneScoreLabel, playerTwoScoreLabel };
     }
 
-    private int fadeColorComponent(int comp1, int comp2, double ratio) {
-        return (int)Math.abs((ratio*comp1) + ((1-ratio) * comp2));
-    }
-
     private Color getScoreColour(double elapsed) {
         double ratio = Math.min(1, (elapsed * 1000) / scoreEffectTransitionTime); // Range from 0.0 to 1.0
 
@@ -60,5 +56,9 @@ public class GameFragment extends Fragment {
 
         if(players.length > 0) playerOneScoreLabel.setColor(getScoreColour(players[0].getScoreTime()));
         if(players.length > 1) playerTwoScoreLabel.setColor(getScoreColour(players[1].getScoreTime()));
+    }
+
+    private int fadeColorComponent(int comp1, int comp2, double ratio) {
+        return (int)Math.abs((ratio*comp1) + ((1-ratio) * comp2));
     }
 }
