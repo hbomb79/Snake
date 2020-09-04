@@ -3,10 +3,8 @@ package entity;
 import controllers.CollisionController;
 import interfaces.CollisionElement;
 import main.SnakeGame;
-import org.w3c.dom.css.Rect;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
@@ -23,7 +21,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
     protected final int partHeight;
 
     protected int velocity = 2;
-    protected DIRECTION direction;
 
     public enum DIRECTION {
         UP,
@@ -201,7 +198,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
             // This boundary covers where we are, and where we're going. We use Math.min/max to ensure the rectangle
             // doesn't have a negative width and height, but instead just starts further up/left.
 
-            //TODO Simplify boundary creation, potentially move to SnakePart class.
             Rectangle boundary = new Rectangle(Math.min(sX, tX), Math.min(sY, tY), Math.max( 1, Math.max(sX, tX) - Math.min(sX, tX) ), Math.max( 1, Math.max(sY, tY) - Math.min(sY, tY)));
 
             SnakeTurn t = SnakeTurn.findNextTurn(boundary, turns);
@@ -218,49 +214,36 @@ public class SnakeEntity extends Entity implements CollisionElement {
                     boundary.setRect(Math.min(t.x, tX), Math.min(t.y, tY), Math.max(t.x, tX) - Math.min(t.x, tX), Math.max(t.y, tY) - Math.min(t.y, tY));
                     SnakeTurn nextTurn = SnakeTurn.findNextTurn(boundary, turns, t);
 
-                    //TODO Should be able merge blocks for same axis of movement in to one if block
-                    if (t.newDirection == DIRECTION.UP) {
-                        s.x = t.x;
-                        if (nextTurn != null) {
-                            // We've found another turn in the path of our planned change. Update the target X and Y
-                            // and allow the loop to continue.
-                            s.y = t.y;
-                            tY = s.y - dY;
-                        } else {
-                            s.y = t.y - dY;
-                        }
-                    } else if (t.newDirection == DIRECTION.DOWN) {
-                        s.x = t.x;
-                        if (nextTurn != null) {
-                            s.y = t.y;
-                            tY = s.y + dY;
-                        } else {
-                            s.y = t.y + dY;
-                        }
-                    } else if (t.newDirection == DIRECTION.RIGHT) {
-                        s.y = t.y;
-                        if (nextTurn != null) {
+                    switch(t.newDirection){
+                        case UP:
+                            dY = dY * -1;
+                        case DOWN:
                             s.x = t.x;
-                            tX = s.x + dX;
-                        } else {
-                            s.x = t.x + dX;
-                        }
-                    } else if (t.newDirection == DIRECTION.LEFT) {
-                        s.y = t.y;
-                        if (nextTurn != null) {
-                            s.x = t.x;
-                            tX = s.x - dX;
-                        } else {
-                            s.x = t.x - dX;
-                        }
+                            if(nextTurn != null) {
+                                s.y = t.y;
+                                tY = s.y + dY;
+                            } else {
+                                s.y = t.y + dY;
+                            }
+
+                            break;
+                        case LEFT:
+                            dX = dX * -1;
+                        case RIGHT:
+                            s.y = t.y;
+                            if(nextTurn != null) {
+                                s.x = t.x;
+                                tX = s.x + dX;
+                            } else {
+                                s.x = t.x + dX;
+                            }
+
+                            break;
                     }
 
-                    if (isLastPart) {
-                        t.markForDestruction();
-                    }
-
-                    if(isHead) collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y));
-                    s.direction = t.newDirection;
+                    if(isLastPart)  t.markForDestruction();
+                    if(isHead)      collisionBoxes.add(createCollisionBox(sX, sY, s.x, s.y));
+                    s.direction =   t.newDirection;
                     t = nextTurn;
                 }
 
