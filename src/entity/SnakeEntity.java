@@ -347,13 +347,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
         return false;
     }
 
-    protected void checkCollisions(LinkedList<Rectangle> collisionBoxes) {
-        CollisionController collisions = gameInstance.getCollisionController();
-        for(Rectangle bounds : collisionBoxes) {
-            collisions.checkCollision(this, bounds);
-        }
-    }
-
     @Override
     public void update(double dt) {
         // Move depending on velocity
@@ -361,6 +354,13 @@ public class SnakeEntity extends Entity implements CollisionElement {
         SnakeTurn.destroyDwindling(turns);
 
         checkCollisions(collisionBoxes);
+    }
+
+    private void checkCollisions(LinkedList<Rectangle> collisionBoxes) {
+        CollisionController collisions = gameInstance.getCollisionController();
+        for(Rectangle bounds : collisionBoxes) {
+            collisions.checkCollision(this, bounds);
+        }
     }
 
     @Override
@@ -377,7 +377,5 @@ public class SnakeEntity extends Entity implements CollisionElement {
                 gameInstance.drawImage(bodyImage, part.x, part.y);
             }
         }
-
-        g.draw(getBounds());
     }
 }

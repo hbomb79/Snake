@@ -1,7 +1,9 @@
 package entity;
 
+import effects.TextFadeEffect;
 import interfaces.CollisionElement;
 import main.SnakeGame;
+import ui.Text;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -35,6 +37,11 @@ public class ApplePickup extends Pickup {
 
         // Inform the game to create another apple
         gameInstance.respawnApple();
+
+        // Spawn a text effect
+        Text t = new Text("+1", "Arial", 10);
+        TextFadeEffect fx = new TextFadeEffect(x, y, t, new Color(231, 210, 93), 10);
+        gameInstance.getEffectsController().spawnEffect(fx);
     }
 
     @Override

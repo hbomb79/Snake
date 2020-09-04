@@ -80,6 +80,7 @@ public class SnakeGame extends GameEngine {
         ui = new UIController(this);
         entity = new EntityController(this);
         collision = new CollisionController(this);
+        fx = new EffectController(this);
     }
 
     protected void graphicsReady() {
@@ -104,6 +105,7 @@ public class SnakeGame extends GameEngine {
 
         if(gameState == STATE.GAME && !paused) {
             entity.update(dt);
+            fx.update(dt);
         }
 
         ui.update(dt);
@@ -119,40 +121,40 @@ public class SnakeGame extends GameEngine {
         changeBackgroundColor(black);
         clearBackground(WIDTH, HEIGHT);
 
-        if(gameState == STATE.GAME)
+        if(gameState == STATE.GAME) {
             entity.redraw();
+            fx.redraw();
+        }
 
         ui.redraw();
     }
 
     // Called whenever a key is pressed
+    @Override
     public void keyPressed(KeyEvent event) {
-        if(event.getKeyCode() == KeyEvent.VK_ESCAPE && gameState == STATE.GAME) {
+        if (event.getKeyCode() == KeyEvent.VK_ESCAPE && gameState == STATE.GAME) {
             paused = !paused;
             // Refresh fragment-based scenes
             changeGameState(gameState);
-        } else if(!paused) {
+        } else if (!paused) {
             entity.keyPressed(event);
         }
     }
 
-    // Called whenever a key is released
-    public void keyReleased(KeyEvent event) {}
-
-    // Called whenever a key is pressed and immediately released
-    public void keyTyped(KeyEvent event) {}
-
     // Called whenever a mouse button is pressed
+    @Override
     public void mousePressed(MouseEvent event) {
         ui.mousePressed(event);
     }
 
     // Called whenever a mouse button is released
+    @Override
     public void mouseReleased(MouseEvent event) {
         ui.mouseReleased(event);
     }
 
     // Called whenever the mouse is moved
+    @Override
     public void mouseMoved(MouseEvent event) {
         ui.mouseMoved(event);
     }
@@ -241,5 +243,9 @@ public class SnakeGame extends GameEngine {
 
     public EntityController getEntityController() {
         return entity;
+    }
+
+    public EffectController getEffectsController() {
+        return fx;
     }
 }
