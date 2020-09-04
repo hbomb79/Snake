@@ -27,15 +27,13 @@ public class EntityController extends Controller {
         entities.clear();
         playerCount = players.length;
         for(int i = 0; i < playerCount; i++) {
-            SnakeEntity e = new SnakeEntity(gameInstance, i);
-            players[i].assignSnake(e);
+            SnakeEntity e = new SnakeEntity(gameInstance, players[i]);
             entities.add(e);
         }
     }
 
     public void update(double dt) {
         for (Entity entity : entities) {
-            System.out.println("Updating " + entity);
             entity.update(dt);
         }
 

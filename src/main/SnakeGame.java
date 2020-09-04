@@ -178,9 +178,15 @@ public class SnakeGame extends GameEngine {
         nextState = s;
     }
 
-    public void snakeDeath(int playerId) {
-        deathFragment.providePlayerId(playerId);
-        changeGameState(STATE.DEATH);
+    public void snakeDeath(Player player) {
+        player.notifyLoss();
+
+        // Allow to finish the entity update cycle incase the snakes crashed in to each other.
+        scheduleGameStateChange(STATE.DEATH);
+    }
+
+    public Player[] getPlayers() {
+        return players;
     }
 
     public void startGame(int c) {

@@ -33,7 +33,7 @@ public abstract class Effect implements EngineComponent {
     @Override
     public void update(double dt) {
         frame++;
-        if(frame > endFrame) {
+        if(frame >= endFrame) {
             destroyEffect();
             return;
         }
@@ -41,7 +41,7 @@ public abstract class Effect implements EngineComponent {
 
     @Override
     public void paintComponent() {
-        if(frame <= endFrame) frames.get(frame).drawFrame(gameInstance.getGameGraphics(), x, y);
+        if(frame < endFrame) frames.get(frame).drawFrame(gameInstance.getGameGraphics(), x, y);
     }
 
     private void destroyEffect() {

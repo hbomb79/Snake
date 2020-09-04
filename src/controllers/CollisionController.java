@@ -15,7 +15,6 @@ public class CollisionController extends Controller {
     }
 
     public boolean checkCollision(CollisionElement source, Rectangle collisionBox) {
-        System.out.println("Checking for collision inside " + collisionBox.toString() + " from " + source.toString());
         // If the source is colliding with the game boundary
         if(collisionBox.x < 0 || collisionBox.x + collisionBox.width > SnakeGame.WIDTH || collisionBox.y < 0 || collisionBox.y + collisionBox.height > SnakeGame.HEIGHT) {
             if(source.collidedWithGameBoundary( collisionBox )) {
@@ -25,7 +24,6 @@ public class CollisionController extends Controller {
 
         // Check with the entity controller for currently on-map entities
         for(Entity p : entities.entities) {
-            System.out.println("Asking " + p + " if this box collides with it");
             Rectangle collidedWith = p.isCollisionBoxIntersecting(collisionBox, source);
             if(collidedWith != null) {
                 if(p.collidedWithBy(collisionBox, source, collidedWith)) {

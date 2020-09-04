@@ -53,4 +53,26 @@ public abstract class Component implements EngineComponent {
     public double getHeight() {
         return height;
     }
+
+    public Component center(boolean horizontal, boolean vertical, int xOffset, int yOffset) {
+        int frameWidth = SnakeGame.WIDTH;
+        int frameHeight = SnakeGame.HEIGHT;
+        double dX = xOffset;
+        double dY = yOffset;
+
+        // This function assumes the frame of reference is the entire game window, and thus the max width and height
+        // is sourced straight from the game instance.
+        if( horizontal ) {
+            dX = dX + (frameWidth / 2.0) - (getWidth() / 2.0);
+        }
+
+        if( vertical ) {
+            dY = dY + (frameHeight / 2.0) - (getHeight() / 2.0);
+        }
+
+        this.x = dX;
+        this.y = dY;
+
+        return this;
+    }
 }

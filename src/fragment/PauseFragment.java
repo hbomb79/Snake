@@ -19,7 +19,7 @@ public class PauseFragment extends Fragment {
 
         components = new Component[]{
                 new Panel(gameInstance, 0, 0, SnakeGame.WIDTH, SnakeGame.HEIGHT).setColor(new Color(0x9E649764, true)),
-                Label.createCentered(gameInstance, pauseText, true, true, 0, -100).setColor(Color.green)
+                new Label(gameInstance, pauseText).center(true, true, 0, -100).setColor(Color.green)
         };
     }
 }

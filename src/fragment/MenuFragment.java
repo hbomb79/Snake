@@ -22,9 +22,9 @@ public class MenuFragment extends Fragment {
         Runnable startTwoPlayer = () -> gameInstance.startGame(2);
 
         components = new Component[]{
-                Button.createCentered(gameInstance, spText, true, true, 0,-100).setCallback(startSinglePlayer),
-                Button.createCentered(gameInstance, mpText, true, true, 0, -50).setCallback(startTwoPlayer),
-                Button.createCentered(gameInstance, quitText, true, true, 0, 0).setCallback(gameInstance::quitGame)
+                new Button(gameInstance, spText).center(true, true, 0,-100).setCallback(startSinglePlayer),
+                new Button(gameInstance, mpText).center(true, true, 0, -50).setCallback(startTwoPlayer),
+                new Button(gameInstance, quitText).center(true, true, 0, 0).setCallback(gameInstance::quitGame)
         };
     }
 }

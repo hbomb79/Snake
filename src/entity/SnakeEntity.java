@@ -2,6 +2,7 @@ package entity;
 
 import controllers.CollisionController;
 import interfaces.CollisionElement;
+import main.Player;
 import main.SnakeGame;
 
 import java.awt.*;
@@ -15,7 +16,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
     protected final int startX;
     protected final int startY;
     protected final DIRECTION startDirection;
-    protected final int playerId;
+    protected final Player player;
 
     protected final int partWidth;
     protected final int partHeight;
@@ -101,8 +102,9 @@ public class SnakeEntity extends Entity implements CollisionElement {
     protected LinkedList<SnakePart> snake = new LinkedList<>();
     protected LinkedList<SnakeTurn> turns = new LinkedList<>();
 
-    public SnakeEntity(SnakeGame game, int id, int x, int y, int size, DIRECTION dir) {
+    public SnakeEntity(SnakeGame game, int id, int x, int y, int size, DIRECTION dir, Player player) {
         super(game);
+        this.player = player;
 
         headImage = game.snakeHeadImage;
         bodyImage = game.snakeBodyImage;
@@ -114,13 +116,12 @@ public class SnakeEntity extends Entity implements CollisionElement {
         startY = y;
         startSize = size;
         startDirection = dir;
-        playerId = id;
 
         increaseLength(startSize);
     }
 
-    public SnakeEntity(SnakeGame game, int id) {
-        this(game, id, 100*(id-1) + SnakeGame.WIDTH/2, SnakeGame.HEIGHT/2, 10, DIRECTION.UP);
+    public SnakeEntity(SnakeGame game, Player player) {
+        this(game, player.getId(), 100*(player.getId()-1) + SnakeGame.WIDTH/2, SnakeGame.HEIGHT/2, 10, DIRECTION.UP, player);
     }
 
     /*
@@ -158,8 +159,12 @@ public class SnakeEntity extends Entity implements CollisionElement {
         turns.addFirst(new SnakeTurn(head.x + offsetX, head.y + offsetY, newDirection));
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
     public int getPlayerId() {
-        return playerId;
+        return player.getId();
     }
 
     protected Rectangle createCollisionBox(int x, int y, int deltaX, int deltaY) {
@@ -315,7 +320,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
 
         // Check each part of the snake, return true as soon as collision occurs.
         // Ignore the head as the heads movement will always 'collide' with it's own.. movement.. obviously.
-        for (int i = 1, snakeSize = snake.size(); i < snakeSize; i++) {
+        for (int i = 0, snakeSize = snake.size(); i < snakeSize; i++) {
             SnakePart part = snake.get(i);
             if (part.getBounds().intersects(collision) && (!source.equals(this) || proveCollisionIntent(collision, part.getBounds()))) {
                 return part.getBounds();
@@ -327,7 +332,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
 
     @Override
     public boolean collidedWithGameBoundary(Rectangle collisionBox) {
-        gameInstance.snakeDeath(playerId);
+        gameInstance.snakeDeath(getPlayer());
         return true;
     }
 
@@ -335,10 +340,14 @@ public class SnakeEntity extends Entity implements CollisionElement {
     public boolean collidedWithBy(Rectangle collision, CollisionElement source, Rectangle infringedBoundary) {
         if(source instanceof SnakeEntity) {
             if(source.equals(this)) {
-                gameInstance.snakeDeath(playerId);
+                gameInstance.snakeDeath(getPlayer());
             } else {
                 // Another player ran in to us
-                gameInstance.snakeDeath(((SnakeEntity) source).getPlayerId());
+                if(source.isCollisionBoxIntersecting(snake.getFirst().getBounds(), this) != null){
+                    // We collided mutually; both players lose
+                    gameInstance.snakeDeath(getPlayer());
+                }
+                gameInstance.snakeDeath(((SnakeEntity) source).getPlayer());
             }
 
             return true;
@@ -365,8 +374,6 @@ public class SnakeEntity extends Entity implements CollisionElement {
 
     @Override
     public void paintComponent() {
-        Graphics2D g = gameInstance.getGameGraphics();
-
         // Draw the snake head and tail
         boolean head = true;
         for(SnakePart part : snake) {

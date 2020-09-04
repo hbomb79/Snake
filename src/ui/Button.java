@@ -52,6 +52,14 @@ public class Button extends Component implements UIMouseReactive {
         activeFgColour = Color.white;
     }
 
+    public Button(SnakeGame g, double X, double Y, Text t) {
+        this(g, X, Y, 0, 0, t);
+    }
+
+    public Button(SnakeGame g, Text t) {
+        this(g, 0, 0, t);
+    }
+
     @Override
     public void onMouseEnter(MouseEvent event) {
         state = STATE.HOVERED;
@@ -116,7 +124,7 @@ public class Button extends Component implements UIMouseReactive {
         // Draw the button
         Graphics2D g = gameInstance.getGameGraphics();
         g.setColor(bg);
-        g.drawRect((int)x, (int)y, (int)(width + padding*2), (int)(height + padding*2));
+        g.drawRect((int)x, (int)y, (int)getWidth(), (int)getHeight());
 
         g.setColor(fg);
         g.setFont(text.getFontInstance());
@@ -134,7 +142,7 @@ public class Button extends Component implements UIMouseReactive {
     }
 
     public double getWidth() {
-        return width + (2*padding);
+        return text.getRenderedWidth() + (2*padding);
     }
 
     public Component setHeight( double b ) {
@@ -143,7 +151,7 @@ public class Button extends Component implements UIMouseReactive {
     }
 
     public double getHeight() {
-        return height + (2*padding);
+        return text.getRenderedHeight() + (2*padding);
     }
 
     public int getPadding() {
@@ -207,28 +215,8 @@ public class Button extends Component implements UIMouseReactive {
         return activeCallback;
     }
 
-    public static Button createCentered(SnakeGame g, Text t, boolean horizontal, boolean vertical, int xOffset, int yOffset) {
-        int tWidth = t.getRenderedWidth();
-        int tHeight = t.getRenderedHeight();
-        int frameWidth = SnakeGame.WIDTH;
-        int frameHeight = SnakeGame.HEIGHT;
-        double dX = xOffset;
-        double dY = yOffset;
-
-        // This function assumes the frame of reference is the entire game window, and thus the max width and height
-        // is sourced straight from the game instance.
-        if( horizontal ) {
-            dX = dX + (frameWidth / 2.0) - (tWidth / 2.0);
-        }
-
-        if( vertical ) {
-            dY = dY + (frameHeight / 2.0) - (tHeight / 2.0);
-        }
-
-        return new Button(g, dX, dY, tWidth, tHeight, t);
-    }
-
-    public static Button createCentered(SnakeGame g, Text t, boolean horizontal, boolean vertical) {
-        return createCentered(g, t, horizontal, vertical, 0, 0);
+    @Override
+    public Button center(boolean horizontal, boolean vertical, int xOffset, int yOffset) {
+        return (Button)super.center(horizontal, vertical, xOffset, yOffset);
     }
 }
