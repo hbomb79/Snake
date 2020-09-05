@@ -3,7 +3,10 @@ package fragment;
 import main.SnakeGame;
 import ui.Button;
 import ui.Component;
+import ui.Label;
 import ui.Text;
+
+import java.awt.*;
 
 /**
  * This fragment is used to display the main menu
@@ -34,9 +37,10 @@ public class MenuFragment extends Fragment {
         Runnable startTwoPlayer = () -> gameInstance.startGame(2);
 
         components = new Component[]{
-                new Button(gameInstance, spText).center(true, true, 0,-100).setCallback(startSinglePlayer),
-                new Button(gameInstance, mpText).center(true, true, 0, -50).setCallback(startTwoPlayer),
-                new Button(gameInstance, quitText).center(true, true, 0, 0).setCallback(gameInstance::quitGame)
+                new Label(gameInstance, new Text("Snake!").setSize(30)).center(true, true, 0, -100).setColor(Color.green),
+                new Button(gameInstance, spText).center(true, true, 0,-50).setCallback(startSinglePlayer),
+                new Button(gameInstance, mpText).center(true, true, 0, 0).setCallback(startTwoPlayer),
+                new Button(gameInstance, quitText).center(true, true, 0, 50).setCallback(gameInstance::quitGame)
         };
     }
 }

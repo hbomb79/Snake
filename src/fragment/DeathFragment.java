@@ -52,9 +52,9 @@ public class DeathFragment extends Fragment {
         Runnable backToMenu = () -> gameInstance.scheduleGameStateChange(SnakeGame.STATE.MENU);
 
         components = new Component[]{
-                new Label(gameInstance, gameOverText).center(true, true, 0, -150),
+                new Label(gameInstance, gameOverText).center(true, true, 0, -120),
                 gameResultLabel,
-                new Button(gameInstance, menuText).center(true, true, 0, -100).setCallback(backToMenu),
+                new Button(gameInstance, menuText).center(true, true, 0, -50).setCallback(backToMenu),
                 new Button(gameInstance, quitText).center(true, true, 0, 0).setCallback(gameInstance::quitGame)
         };
     }
@@ -86,6 +86,6 @@ public class DeathFragment extends Fragment {
             }
         }
 
-        gameResultLabel.center(true, true, 0, -120);
+        gameResultLabel.center(true, true, 0, -100);
     }
 }
