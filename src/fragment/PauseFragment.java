@@ -1,0 +1,37 @@
+package fragment;
+
+import main.SnakeGame;
+import ui.Component;
+import ui.Label;
+import ui.Panel;
+import ui.Text;
+
+import java.awt.*;
+
+/**
+ * This fragment is used to display a pause overlay when the user hits the 'ESCAPE' key.
+ *
+ * @author Harry Felton
+ */
+public class PauseFragment extends Fragment {
+    /**
+     * Constructs the PauseFragment
+     * @param game The {@code SnakeGame} the fragment is attached to
+     */
+    public PauseFragment(SnakeGame game) {
+        super(game);
+    }
+
+    /**
+     * Create the components to be displayed
+     */
+    @Override
+    public void createComponents() {
+        Text pauseText = new Text("Game Paused");
+
+        components = new Component[]{
+                new Panel(gameInstance, 0, 0, SnakeGame.WIDTH, SnakeGame.HEIGHT).setColor(new Color(0x9E649764, true)),
+                new Label(gameInstance, pauseText).center(true, true, 0, -100).setColor(Color.green)
+        };
+    }
+}
