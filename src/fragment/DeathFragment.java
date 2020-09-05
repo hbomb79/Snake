@@ -11,13 +11,34 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The DeathFragment is displayed when the game has ended. It shows the winning player and their score.
+ *
+ * @author Harry Felton
+ */
 public class DeathFragment extends Fragment {
+    /**
+     * The text displaying the information of the winning player
+     */
     protected Text gameResultText;
+
+    /**
+     * The label responsible for displaying the information of the winning player
+     */
     protected Label gameResultLabel;
+
+    /**
+     * Constructs the Fragment
+     *
+     * @param game The game instance the fragment is attached to
+     */
     public DeathFragment(SnakeGame game) {
         super(game);
     }
 
+    /**
+     * Creates the components for display when the fragment becomes active
+     */
     @Override
     public void createComponents() {
         super.createComponents();
@@ -38,6 +59,11 @@ public class DeathFragment extends Fragment {
         };
     }
 
+    /**
+     * Updates the fragment to display new information about the winning players
+     *
+     * @param dt Time since the last update occurred
+     */
     @Override
     public void update(double dt) {
         if(!active) return;

@@ -5,11 +5,23 @@ import ui.Button;
 import ui.Component;
 import ui.Text;
 
+/**
+ * This fragment is used to display the main menu
+ *
+ * @author Harry Felton
+ */
 public class MenuFragment extends Fragment {
+    /**
+     * Constructs the fragment
+     * @param game The {@code SnakeGame} the fragment is attached to
+     */
     public MenuFragment(SnakeGame game) {
         super(game);
     }
 
+    /**
+     * Create the components to be displayed
+     */
     @Override
     public void createComponents() {
         super.createComponents();

@@ -8,11 +8,23 @@ import ui.Text;
 
 import java.awt.*;
 
+/**
+ * This fragment is used to display a pause overlay when the user hits the 'ESCAPE' key.
+ *
+ * @author Harry Felton
+ */
 public class PauseFragment extends Fragment {
+    /**
+     * Constructs the PauseFragment
+     * @param game The {@code SnakeGame} the fragment is attached to
+     */
     public PauseFragment(SnakeGame game) {
         super(game);
     }
 
+    /**
+     * Create the components to be displayed
+     */
     @Override
     public void createComponents() {
         Text pauseText = new Text("Game Paused");
