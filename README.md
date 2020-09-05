@@ -16,15 +16,18 @@ of the movement system, and the accompanying collision logic.
 1. The game sends and update tick to the snake.
 2. The snake begins to calculate it's next move. It scans ahead by the amount of distance it's planning to travel,
 and searches for any turns the player has made.
-3a. If a turn is found, it's executed. Of course, the snake won't always land exactly on a turn (as it's moving atleast 2 pixels
+3. If a turn is found, it's executed. Of course, the snake won't always land exactly on a turn (as it's moving atleast 2 pixels
 at a time), so we take care of excess distance by moving it to the new direction.
-3b. If no turn is found, the snake simply moves forward
+    
+    If no turn is found, the snake simply moves forward
 4. The snake records it's movement in the form of a collision box to be checked later
 5. After the snake has finished moving, the collision boxes generated are handed to the `CollisionController` attached
 to the `SnakeGame` instance, and the collision logic begins.
-6a. If a snake is found to collide with an Apple, it's length is increased and the apple respawned.
-6b. If a snake collides head on with another snake (two-player mode only), then a tie is reached
-6c. If a snake collides with another (not head-on), then the collided-with snake is the winner.
+6.  * If a snake is found to collide with an Apple, it's length is increased and the apple respawned.
+
+    * If a snake collides head on with another snake (two-player mode only), then a tie is reached
+
+    * If a snake collides with another (not head-on), then the collided-with snake is the winner.
 7. The cycle starts all over again
 
 This system was exceptionally intricate to implement, and involves checking collisions for _intent_ to ensure the head of
