@@ -176,7 +176,7 @@ public class EntityController extends Controller {
                 players[Math.min(i, playerCount-1)].changeDirection(SnakeEntity.DIRECTION.LEFT);
                 break;
         }
-    };
+    }
 
     /**
      * Given a {@code Pickup} instance, this function generates a random point for it, ensuring that

@@ -42,7 +42,7 @@ public abstract class Fragment {
      */
     public void createComponents() {
         components = new Component[0];
-    };
+    }
 
     /**
      * Activates the fragment to allow update and draw requests to reach the components

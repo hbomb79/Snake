@@ -69,7 +69,7 @@ public abstract class Pickup extends Entity {
     /**
      * Called when the {@code Pickup} is ready for initialisation
      */
-    public void init(){};
+    public void init(){}
 
     /**
      * Applies the effect by destroying the Pickup via the {@code EntityController} attached to the {@code gameInstance}
