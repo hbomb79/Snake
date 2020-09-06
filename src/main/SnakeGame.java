@@ -60,9 +60,14 @@ public class SnakeGame extends GameEngine {
     public final BufferedImage snakeHeadImage;
 
     /**
-     * The image representing the body of the snake
+     * The image representing the body of the snake for player one
      */
-    public final BufferedImage snakeBodyImage;
+    public final BufferedImage snakeGreenBodyImage;
+
+    /**
+     * The image representing the body of the snake for player two, if present
+     */
+    public final BufferedImage snakeBlueBodyImage;
 
 
     /**
@@ -161,7 +166,8 @@ public class SnakeGame extends GameEngine {
 
         appleImage = loadImage("resources/apple.png");
         snakeHeadImage = loadImage("resources/head.png");
-        snakeBodyImage = loadImage("resources/dot.png");
+        snakeGreenBodyImage = loadImage("resources/dot.png");
+        snakeBlueBodyImage = loadImage("resources/dot2.png");
     }
 
     /**

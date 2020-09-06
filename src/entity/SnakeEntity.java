@@ -263,7 +263,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
         this.player = player;
 
         headImage = game.snakeHeadImage;
-        bodyImage = game.snakeBodyImage;
+        bodyImage = player.getId() == 0 ? game.snakeGreenBodyImage : game.snakeBlueBodyImage;
 
         partWidth = headImage.getWidth();
         partHeight = headImage.getHeight();
