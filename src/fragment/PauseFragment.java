@@ -11,7 +11,7 @@ import java.awt.*;
 /**
  * This fragment is used to display a pause overlay when the user hits the 'ESCAPE' key.
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class PauseFragment extends Fragment {
     /**

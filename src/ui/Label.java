@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * The Label class is used to display a single line of text on the game screen
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class Label extends ColouredComponent {
     /**

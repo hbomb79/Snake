@@ -10,7 +10,7 @@ import java.awt.*;
  * The RandomPoint is used to find a set of co-ordinates that is not colliding with any other entities or the game
  * boundary.
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class RandomPoint extends Point implements CollisionElement {
     /**

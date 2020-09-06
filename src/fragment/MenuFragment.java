@@ -11,7 +11,7 @@ import java.awt.*;
 /**
  * This fragment is used to display the main menu
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class MenuFragment extends Fragment {
     /**

@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 /**
  * Abstracted functionality for game fragments is kept here
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public abstract class Fragment {
     /**

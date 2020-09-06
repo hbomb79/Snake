@@ -8,7 +8,7 @@ import java.awt.*;
 /**
  * This {@code Effect} class is used to show a piece of text, and have it slowly fade out and rise out of position
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class TextFadeEffect extends Effect {
     /**

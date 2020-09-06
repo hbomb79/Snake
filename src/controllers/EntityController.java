@@ -15,7 +15,7 @@ import java.util.LinkedList;
  * The EntityController class handles the adding, removal, updating and drawing of onscreen elements, such
  * as {@code SnakeEntity} and {@code ApplePickup}.
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class EntityController extends Controller {
     /**

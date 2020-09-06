@@ -8,7 +8,7 @@ import java.util.LinkedList;
 /**
  * EffectController facilitates the spawning and animation of effects in the game
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class EffectController extends Controller {
     /**

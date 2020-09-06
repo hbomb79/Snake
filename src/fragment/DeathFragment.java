@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * The DeathFragment is displayed when the game has ended. It shows the winning player and their score.
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class DeathFragment extends Fragment {
     /**

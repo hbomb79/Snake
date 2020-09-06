@@ -8,7 +8,7 @@ import java.awt.*;
 /**
  * The Pickup class handles some of the backend core functionality of on-screen Pickups
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public abstract class Pickup extends Entity {
     /**

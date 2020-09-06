@@ -9,7 +9,7 @@ import java.util.LinkedList;
 /**
  * The UIController is responsible for managing and drawing {@code Fragments} on screen
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class UIController extends Controller {
     /**

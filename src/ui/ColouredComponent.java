@@ -8,7 +8,7 @@ import java.awt.*;
  * A coloured version of the {@code Component} class, providing storage, setting and getting of the colour
  * used for this component
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public abstract class ColouredComponent extends Component {
     /**

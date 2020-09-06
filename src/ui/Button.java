@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 /**
  * The Button Component allows the user to interact with a visual element via mouse movement and clicks
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class Button extends Component implements UIMouseReactive {
     /**

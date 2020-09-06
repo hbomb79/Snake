@@ -22,7 +22,7 @@ import java.util.Random;
  *
  * Singleton class, fetch running instance using SnakeGame.getGameInstance();
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class SnakeGame extends GameEngine {
     /**

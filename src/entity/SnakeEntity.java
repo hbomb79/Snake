@@ -13,7 +13,7 @@ import java.util.LinkedList;
 /**
  * The SnakeEntity class is responsible for moving and handling precise collision checks for the in-game snakes
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class SnakeEntity extends Entity implements CollisionElement {
     /**

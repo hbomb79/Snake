@@ -7,7 +7,7 @@ import main.SnakeGame;
  * The core component class, used to abstract common information from
  * UI elements, such as position and size.
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public abstract class Component implements EngineComponent {
     /**

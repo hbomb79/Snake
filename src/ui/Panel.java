@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D;
 /**
  * The Panel class is used to display a solid, rectangular block of colour; or, the outline of said block.
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class Panel extends ColouredComponent {
     /**

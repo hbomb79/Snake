@@ -8,7 +8,7 @@ import java.awt.*;
  * A simple class that allows the encapsulation of text information for easier transport of this information
  * inside of classes. For example, a Button class can simply accept a Text object, rather than two strings and an int.
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class Text {
     /**

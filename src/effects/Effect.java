@@ -11,7 +11,7 @@ import java.util.LinkedList;
 /**
  * The Effect class is responsible for animating effects inside the game window
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public abstract class Effect implements EngineComponent {
     /**

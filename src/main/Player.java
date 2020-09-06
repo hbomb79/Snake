@@ -3,7 +3,7 @@ package main;
 /**
  * The Player class is used to keep track of the player stats
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class Player {
     /**

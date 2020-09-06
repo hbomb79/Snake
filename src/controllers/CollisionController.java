@@ -10,7 +10,7 @@ import java.awt.*;
  * CollisionController is responsible for checking for collisions between entities running inside the
  * game.
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class CollisionController extends Controller {
     EntityController entities;

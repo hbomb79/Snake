@@ -11,7 +11,7 @@ import java.awt.*;
 /**
  * This fragment is used to display the current score of the players
  *
- * @author Harry Felton
+ * @author Harry Felton - 18032692
  */
 public class GameFragment extends Fragment {
     /**
