@@ -3,6 +3,7 @@ package entity;
 import controllers.CollisionController;
 import interfaces.CollisionElement;
 import main.Player;
+import main.RandomPoint;
 import main.SnakeGame;
 
 import java.awt.*;
@@ -576,7 +577,7 @@ public class SnakeEntity extends Entity implements CollisionElement {
             return true;
         }
 
-        return false;
+        return (source instanceof RandomPoint);
     }
 
     /**
